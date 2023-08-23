@@ -1,0 +1,46 @@
+#.math
+00: 81 e0 2f fc
+04: 92 114 00 08
+08: 92 214 00 0c
+0c: 50 11 20 00
+10: 93 2e 00 04
+14: 93 fe 00 04
+18: 1c 00 00 00
+1c: 81 e0 2f fc
+20: 92 114 00 08
+24: 92 214 00 0c
+28: 51 11 20 00
+2c: 93 2e 00 04
+30: 93 fe 00 04
+34: 81 e0 2f fc
+38: 92 114 00 08
+3c: 92 214 00 0c
+40: 52 11 20 00
+44: 93 2e 00 04
+48: 93 fe 00 04
+4c: 81 e0 2f fc
+50: 92 114 00 08
+54: 92 214 00 0c
+58: 53 11 20 00
+5c: 93 2e 00 04
+60: 93 fe 00 04
+64: 08 00 00 00
+68: 0c 00 00 00
+6c: 00 00 00 00
+70: 1c 00 00 00
+74: 34 00 00 00
+78: 4c 00 00 00
+#.symtab.math
+Num	Value	Size	Type	Bind		Ndx	Name
+1:	00		0			NOTYP	GLOB		5		mathAdd	
+2:	1c		0			NOTYP	GLOB		5		mathSub	
+3:	34		0			NOTYP	GLOB		5		mathMul	
+4:	4c		0			NOTYP	GLOB		5		mathDiv	
+5:	00		0			SCTN	LOC		5		.math	
+5:	UND		0			NOTYP	LOC		5		mathSub	
+#.rela.math
+Offset	Type					Symbol	Addend
+6c			R_X86_64_32		5				0
+70			R_X86_64_32		5				1c
+74			R_X86_64_32		5				34
+78			R_X86_64_32		5				4c

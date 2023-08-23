@@ -1,0 +1,35 @@
+#.math
+81 e0 20 04
+92 1e 00 08
+92 2e 00 0C
+50 11 20 00
+93 2e 00 04
+93 fe 00 04
+81 e0 20 04
+92 1e 00 08
+92 2e 00 0C
+51 11 20 00
+93 2e 00 04
+93 fe 00 04
+81 e0 20 04
+92 1e 00 08
+92 2e 00 0C
+52 11 20 00
+93 2e 00 04
+93 fe 00 04
+81 e0 20 04
+92 1e 00 08
+92 2e 00 0C
+53 11 20 00
+93 2e 00 04
+93 fe 00 04
+##.symtab
+Num	Value	Size	Type	Bind	globDef	Ndx	Name
+0 0 0 0 0 0 0 NONAME
+1 0 0 1 0 0 1 math
+2 0 0 0 1 1 1 mathAdd
+3 24 0 0 1 1 1 mathSub
+4 48 0 0 1 1 1 mathMul
+5 72 0 0 1 1 1 mathDiv
+###.rela.math
+Offset	Type		Symbol	Addend

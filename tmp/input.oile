@@ -1,0 +1,19 @@
+00: 38 f0 00 00
+04: 38 f0 01ed
+08: 38 f0 01ed
+0c: 38 f0 01f1
+1f1: 07 00 00 00
+1f5: 05 00 00 00
+1f9: UND
+1fd: 0a 00 00 00
+#.symtab
+Num	Value	Size	Type	Bind		Ndx	Name
+1:	00		0			NOTYP	GLOB		0		handler	
+2:	00		0			SCTN	LOC		2		.my_code_main	
+3:	0c		0			NOTYP	LOC		2		wait	
+4:	04		0			NOTYP	GLOB		5		my_counter	
+5:	00		0			SCTN	LOC		5		.my_data	
+6:	00		0			SCTN	LOC		6		.my_data2	
+#.rela
+Offset	Type					Symbol	Addend
+1f9			R_X86_64_32		-1				UND
