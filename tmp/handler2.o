@@ -1,0 +1,51 @@
+#.my_handler
+000: 81 e0 1f fc
+004: 81 e0 2f fc
+008: 90 12 00 00
+00c: 92 2f 00 44
+010: 39 f1 20 4c
+014: 92 2f 00 40
+018: 39 f1 20 48
+01c: 92 2f 00 3c
+020: 39 f1 20 44
+024: 93 2e 00 04
+028: 93 1e 00 04
+02c: 91 ee 00 08
+030: 96 0e 0f fc
+034: 92 fe 0f f8
+038: 21 f0 00 30
+03c: 38 f0 00 30
+040: 21 f0 00 30
+044: 38 f0 00 28
+048: 21 f0 00 2c
+04c: 38 f0 00 20
+050: 02 00 00 00
+054: 03 00 00 00
+058: 04 00 00 00
+05c: 00 00 00 00
+060: 00 00 00 00
+064: 00 00 00 00
+068: 00 00 00 00
+06c: 00 00 00 00
+070: 00 00 00 00
+074: 00 00 00 00
+#.rela.my_handler
+Offset	Type					Symbol	Addend
+05c			R_X86_64_32		005				038
+060			R_X86_64_32		005				040
+064			R_X86_64_32		005				048
+068			R_X86_64_32		001				000
+06c			R_X86_64_32		005				024
+070			R_X86_64_32		002				000
+074			R_X86_64_32		003				000
+#.symtab
+Num	Value	Size	Type	Bind		Ndx	Name
+1:	000		0			NOTYP	GLOB		0		isr_timer	
+2:	000		0			NOTYP	GLOB		0		isr_terminal	
+3:	000		0			NOTYP	GLOB		0		isr_software	
+4:	000		0			NOTYP	GLOB		5		handler	
+5:	000		0			SCTN	LOC		5		.my_handler	
+6:	024		0			NOTYP	LOC		5		finish	
+7:	038		0			NOTYP	LOC		5		handle_timer	
+8:	040		0			NOTYP	LOC		5		handle_terminal	
+9:	048		0			NOTYP	LOC		5		handle_software	

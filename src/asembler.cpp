@@ -26,14 +26,14 @@ string sp = decToHex(14);
 string pc = decToHex(15);
 
 // string inputFile = "../tests/handler.s";
-// string inputFile = "../tests/handler2.s";
+string inputFile = "../tests/handler2.s";
 // string inputFile = "../tests/isr_software.s";
 // string inputFile = "../tests/isr_terminal.s";
 // string inputFile = "../tests/isr_timer.s";
 // string inputFile = "../tests/main.s";
 // string inputFile = "../tests/main2.s";
-string inputFile = "../tests/math.s";
-// string inputFile = "../tests/input.file";
+// string inputFile = "../tests/math.s";
+// string inputFile = "../tests/input.s";
 
 string ofName = convertPath(inputFile);
 
@@ -137,23 +137,21 @@ void printSymTable()
   }
 }
 
-void printSymTableFile(int sectionID)
+void printSymTableFile()
 {
-  string name = getSectionName(sectionID);
-  outputFile << "#.symtab" << name << endl;
+  outputFile << "#.symtab" << endl;
   outputFile << "Num\tValue\tSize\tType\tBind\t\tNdx\tName" << endl;
 
   for (const auto &element : symbolList)
   {
-    if(element.numSection == sectionID || element.sectionUsed == sectionID){
-      outputFile << element.num << ":\t"
-          << formatLC(element.valDecimal) << "\t\t"
-          << element.size << "\t\t\t"
-          << element.type << "\t"
-          << element.bind << "\t\t"
-          << element.numSection << "\t\t"
-          << element.name << "\t" << endl;
-    }
+    outputFile << element.num << ":\t"
+        << formatLC(element.valDecimal) << "\t\t"
+        << element.size << "\t\t\t"
+        << element.type << "\t"
+        << element.bind << "\t\t"
+        << element.numSection << "\t\t"
+        << element.name << "\t" << endl;
+    
   }
 }
 
@@ -169,7 +167,8 @@ void printLiteralTable()
     }
     cout << element.size << "\t"
          << element.location << "\t"
-         << element.section << endl;
+         << element.section << "\t"
+         <<element.name << endl;
   }
 }
 
@@ -177,7 +176,7 @@ void printLiteralPool(int sectionID)
 {
   for(int i = 0; i < literalList.size(); i++){
       if(literalList[i].section == sectionID){
-        outputFile << literalList[i].location << ": " << formatValue8(literalList[i].val) << endl;
+        outputFile << formatLC(literalList[i].locationDecimal) << ": " << formatValue8(literalList[i].val) << endl;
         incrementLC(1);
       }
     }
@@ -227,8 +226,8 @@ void printRelocationTableFile(int sectionID)
     if(relocationList[i].section == sectionID){
       outputFile << formatLC(relocationList[i].offset) << "\t\t\t"
       << relocationList[i].type << "\t\t"
-      << relocationList[i].symbol << "\t\t\t\t"
-      << relocationList[i].addendHex << endl;
+      << formatLC(relocationList[i].symbol) << "\t\t\t\t"
+      << formatLC(relocationList[i].addend) << endl;
     }
   }
 }
@@ -262,14 +261,38 @@ int insertLiteral(int literal)
   return -1;
 }
 
-int insertExternSymbol()
-{
+int insertSymbolInLP(string symb){
+
   literalAttributes lit = literalAttributes(0, 4, -1, currSection);
-  literalList.push_back(lit);
-  int index = literalList.size() - 1;
-  int secNum = getSectionNumber(currSection);
-  literalList[index].setLocation(sectionList[secNum].literalPoolAddr + (getSectionLiteralsNum(currSection) - 1)*4);  
-  return literalList[index].locationDecimal;
+  lit.name = symb;
+  bool defined = false;
+  for (int i = 0; i < literalList.size(); i++)
+  {
+    if (literalList[i].section == currSection && literalList[i].name == symb)
+    {
+      defined = true;
+      return literalList[i].locationDecimal;
+    }
+  }
+  if(!defined){
+    literalList.push_back(lit);
+    int index = literalList.size() - 1;
+    if(secondPass){
+      int symbNum = getSymbolNumber(symb);
+      int val = getSymbolValue(symb);
+      int secNum = getSectionNumber(literalList[index].section);
+      literalList[index].setLocation(sectionList[secNum].literalPoolAddr + (getSectionLiteralsNum(literalList[index].section) - 1)*4);
+      if(symbolList[symbNum - 1].bind == "LOC"){
+        relocationList.push_back(
+          relocationAttributes(literalList[index].locationDecimal, "R_X86_64_32", symbolList[symbNum - 1].numSection, val, currSection));
+      } else if(symbolList[symbNum - 1].bind == "GLOB"){
+          relocationList.push_back(
+            relocationAttributes(literalList[index].locationDecimal, "R_X86_64_32", symbNum, 0, currSection));
+      }
+    }
+    return literalList[index].locationDecimal;
+  }
+  return -1;
 }
 
 int getSymbolValue(string symb)
@@ -297,6 +320,7 @@ int getSymbolNumber(string symb)
   }
   return -1;
 }
+
 void incrementLC(int numOfInstructions)
 {
   locationCounter += numOfInstructions * 4;
@@ -307,10 +331,10 @@ string formatLC(int lc)
 {
   string val = decToHex(lc);
   if(val.length() == 1){
-    val = "0" + val;
+    val = "00" + val;
   }
   else if(val.length() == 2){
-    return val;
+    return "0" + val;
   }
   return val;
 }
@@ -348,28 +372,12 @@ string getOffset(int literal)
 
 string getOffset(string symbol)
 {
-  int addr = 0;
   int num = getSymbolNumber(symbol);
+  int addr = insertSymbolInLP(symbol);
   if(symbolList[num - 1].numSection == 0){
-    for(int i = 0; i < relocationList.size(); i++){
-      if(relocationList[i].symbol == num){
-        if(relocationList[i].offset != 0){
-          addr = relocationList[i].offset;
-          break;
-        } else {
-          addr = insertExternSymbol();
-          relocationList[i].setOffset(addr);
-          relocationList[i].section = currSection;
-          symbolList[num - 1].sectionUsed = currSection;
-          break;
-        }
-      }
-    }
-  } else {
-    int symVal = getSymbolValue(symbol);
-    addr = insertLiteral(symVal);
+    symbolList[num - 1].sectionUsed = currSection;
   }
-
+  
   string offset = decToHex(addr - locationCounter);
   return offset;
 }
@@ -412,6 +420,7 @@ string getSectionName(int sectionID)
   }
   return "";
 }
+
 string decToHex(int val)
 {
   if(val == -1)
@@ -443,10 +452,10 @@ void __label(string label)
     }
   }
   if(secondPass){
-    int val = getSymbolValue(label);
-    int loc = insertLiteral(val);
-    relocationList.push_back(
-      relocationAttributes(loc, "R_X86_64_32", currSection, val, currSection));
+    // int val = getSymbolValue(label);
+    // int loc = insertLiteral(val);
+    // relocationList.push_back(
+    //   relocationAttributes(loc, "R_X86_64_32", currSection, val, currSection));
   }
 }
 
@@ -463,11 +472,6 @@ void __extern(string symb)
   if(firstPass){
     symbolList.push_back(
         symbolAttributes(counter++, 0, 0, "NOTYP", "GLOB", 0, symb));
-  }
-  if(secondPass){
-    int num = getSymbolNumber(symb);
-    relocationList.push_back(
-      relocationAttributes(0, "R_X86_64_32", num, 0, currSection));
   }
 }
 
@@ -502,7 +506,7 @@ void __section(string symb)
     if(prevSection != -1)
     {
       printLiteralPool(prevSection);
-      printSymTableFile(prevSection);
+      // printSymTableFile(prevSection);
       printRelocationTableFile(prevSection);
     }
     outputFile << "#." << symb << endl;
@@ -513,8 +517,6 @@ void __section(string symb)
 void __word(string symb)
 {
   if(firstPass){
-    symbolList.push_back(
-        symbolAttributes(currSection, -1, 0, "NOTYP", "LOC", currSection, symb));
     incrementLC(1);
   }
   if(secondPass){
@@ -569,7 +571,6 @@ void __int()
   if(firstPass){
     incrementLC(1);
   }
-
   if(secondPass){
     printLC();
     outputFile << "10 00 00 00" << endl;
@@ -660,7 +661,7 @@ void __jmp(int literal)
 void __jmp(string symbol)
 {
   if(firstPass){
-    incrementLC(1); // verovatno, pc <= operand
+    incrementLC(1);
   }
   if(secondPass){
     printLC();
@@ -679,7 +680,7 @@ void __beq(int reg1, int reg2, int literal)
   if(secondPass){
     printLC();
     string offset = getOffset(literal);
-    outputFile << "39 " << pc << reg1 << " " << reg2 << formatValue(offset) << endl;
+    outputFile << "39 " << pc <<  decToHex(reg1) << " " <<  decToHex(reg2) << formatValue(offset) << endl;
     incrementLC(1);
   }
 }
@@ -692,7 +693,7 @@ void __beq(int reg1, int reg2, string symbol)
   if(secondPass){
     printLC();
     string offset = getOffset(symbol);
-    outputFile << "39 " << pc << reg1 << " " << reg2 << formatValue(offset) << endl;
+    outputFile << "39 " << pc <<  decToHex(reg1) << " " <<  decToHex(reg2) << formatValue(offset) << endl;
     incrementLC(1);
   }
 }
@@ -706,7 +707,7 @@ void __bne(int reg1, int reg2, int literal)
   if(secondPass){
     printLC();
     string offset = getOffset(literal);
-    outputFile << "3a " << pc << reg1 << " " << reg2 << formatValue(offset) << endl;
+    outputFile << "3a " << pc <<  decToHex(reg1) << " " <<  decToHex(reg2) << formatValue(offset) << endl;
     incrementLC(1);
   }
 }
@@ -719,7 +720,7 @@ void __bne(int reg1, int reg2, string symbol)
   if(secondPass){
     printLC();
     string offset = getOffset(symbol);
-    outputFile << "3a " << pc << reg1 << " " << reg2 << formatValue(offset) << endl;
+    outputFile << "3a " << pc <<  decToHex(reg1) << " " <<  decToHex(reg2) << formatValue(offset) << endl;
     incrementLC(1);
   }
 }
@@ -733,7 +734,7 @@ void __bgt(int reg1, int reg2, int literal)
   if(secondPass){
     printLC();
     string offset = getOffset(literal);
-    outputFile << "3b " << pc << reg1 << " " << reg2 << formatValue(offset) << endl;
+    outputFile << "3b " << pc <<  decToHex(reg1) << " " <<  decToHex(reg2) << formatValue(offset) << endl;
     incrementLC(1);
   }
 }
@@ -741,12 +742,12 @@ void __bgt(int reg1, int reg2, int literal)
 void __bgt(int reg1, int reg2, string symbol)
 {
   if(firstPass){
-    incrementLC(1); // verovatno, pc <= operand
+    incrementLC(1);
   }
   if(secondPass){
     printLC();
     string offset = getOffset(symbol);
-    outputFile << "3b " << reg1 << " " << reg2 << formatValue(offset) << endl;
+    outputFile << "3b " <<  decToHex(reg1) << " " <<  decToHex(reg2) << formatValue(offset) << endl;
     incrementLC(1);
   }    
 }
@@ -760,7 +761,7 @@ void __ld_immed(int literal, int reg)
   if(secondPass){
     printLC();
     string offset = getOffset(literal);
-    outputFile << "92 " << reg << pc << " 0" << formatValue(offset) << endl;
+    outputFile << "92 " << decToHex(reg) << pc << " 0" << formatValue(offset) << endl;
     incrementLC(1);
   }
 }
@@ -773,7 +774,7 @@ void __ld_immed(string symbol, int reg)
   if(secondPass){
     printLC();
     string offset = getOffset(symbol);
-    outputFile << "92 " << reg << pc << " 0" << formatValue(offset) << endl;
+    outputFile << "92 " <<  decToHex(reg) << pc << " 0" << formatValue(offset) << endl;
     incrementLC(1);
   }
 }
@@ -781,17 +782,17 @@ void __ld_immed(string symbol, int reg)
 void __ld_memdir(int literal, int reg)
 {
   if(firstPass){
-    incrementLC(2); // verovatno, gpr <= operand
+    incrementLC(2);
     insertLiteral(literal);
   }
   if(secondPass){
     printLC();
     string offset = getOffset(literal);
-    outputFile << "92 " << reg << pc << " 0" << formatValue(offset) << endl;
+    outputFile << "92 " <<  decToHex(reg) << pc << " 0" << formatValue(offset) << endl;
     incrementLC(1);
 
     printLC();
-    outputFile << "92 " << reg << reg << " 00 00" << endl;
+    outputFile << "92 " <<  decToHex(reg) << reg << " 00 00" << endl;
     incrementLC(1);
   }
 }
@@ -804,11 +805,11 @@ void __ld_memdir(string symbol, int reg)
   if(secondPass){
     printLC();
     string offset = getOffset(symbol);
-    outputFile << "92 " << reg << pc << " 0" << formatValue(offset) << endl;
+    outputFile << "92 " <<  decToHex(reg) << pc << " 0" << formatValue(offset) << endl;
     incrementLC(1);
 
     printLC();
-    outputFile << "92 " << reg << reg << " 00 00" << endl;
+    outputFile << "92 " <<  decToHex(reg) <<  decToHex(reg) << " 00 00" << endl;
     incrementLC(1);
   }
 }
@@ -820,7 +821,7 @@ void __ld_regdir(int op, int reg)
   }
   if(secondPass){
     printLC();
-    outputFile << "91 " << reg << op << " 00 00" << endl;
+    outputFile << "91 " <<  decToHex(reg) << op << " 00 00" << endl;
     incrementLC(1);
   }
 }
@@ -832,7 +833,7 @@ void __ld_regind(int op, int reg)
   }
   if(secondPass){
     printLC();
-    outputFile << "92 " << reg << op << " 00 00" << endl;
+    outputFile << "92 " <<  decToHex(reg) << op << " 00 00" << endl;
     incrementLC(1);
   }
 }
@@ -841,12 +842,11 @@ void __ld_regindpom(int op, int literal, int reg)
 {
   if(firstPass){
     incrementLC(1);
-    insertLiteral(literal);
   }
   if(secondPass){
     printLC();
     string disp = formatValue(decToHex(literal));
-    outputFile << "92 " << reg << op << " 0" << disp << endl;
+    outputFile << "92 " <<  decToHex(reg) <<  decToHex(op) << " 0" << disp << endl;
     incrementLC(1);
   }
 }
@@ -860,7 +860,7 @@ void __ld_regindpom(int op, string symbol, int reg)
     printLC();
     int val = getSymbolValue(symbol);
     string disp = formatValue(decToHex(val));
-    outputFile << "92 " << reg << op << " 0" << disp << endl;
+    outputFile << "92 " <<  decToHex(reg) <<  decToHex(op) << " 0" << disp << endl;
     incrementLC(1);
   }
 }
@@ -874,7 +874,7 @@ void __st_immed(int literal, int reg)
   if(secondPass){
     printLC();
     string offset = getOffset(literal);
-    outputFile << "80 " << pc << "0 " << reg << formatValue(offset) << endl;
+    outputFile << "80 " << pc << "0 " <<  decToHex(reg) << formatValue(offset) << endl;
     incrementLC(1);
   }
 }
@@ -887,7 +887,7 @@ void __st_immed(string symbol, int reg)
   if(secondPass){
     printLC();
     string offset = getOffset(symbol);
-    outputFile << "80 " << pc << "0 " << reg << formatValue(offset) << endl;
+    outputFile << "80 " << pc << "0 " <<  decToHex(reg) << formatValue(offset) << endl;
     incrementLC(1);
   }
 }
@@ -895,13 +895,13 @@ void __st_immed(string symbol, int reg)
 void __st_memdir(int literal, int reg)
 {
   if(firstPass){
-    incrementLC(1); // verovatno, gpr <= operand
+    incrementLC(1);
     insertLiteral(literal);
   }
   if(secondPass){
     printLC();
     string offset = getOffset(literal);
-    outputFile << "82 " << pc << "0 " << reg << formatValue(offset) << endl;
+    outputFile << "82 " << pc << "0 " <<  decToHex(reg) << formatValue(offset) << endl;
     incrementLC(1);
   }
 }
@@ -914,7 +914,7 @@ void __st_memdir(string symbol, int reg)
   if(secondPass){
     printLC();
     string offset = getOffset(symbol);
-    outputFile << "82 " << pc << "0 " << reg << formatValue(offset) << endl;
+    outputFile << "82 " << pc << "0 " <<  decToHex(reg) << formatValue(offset) << endl;
     incrementLC(1);
   }
 }
@@ -926,7 +926,7 @@ void __st_regdir(int op, int reg)
   }
   if(secondPass){
     printLC();
-    outputFile << "91 " << op << reg << " 00 00" << endl;
+    outputFile << "91 " <<  decToHex(op) <<  decToHex(reg) << " 00 00" << endl;
     incrementLC(1);
   }
 }
@@ -938,7 +938,7 @@ void __st_regind(int op, int reg)
   }
   if(secondPass){
     printLC();
-    outputFile << "92 " << op << reg << " 00 00" << endl;
+    outputFile << "92 " <<  decToHex(op) <<  decToHex(reg) << " 00 00" << endl;
     incrementLC(1);
   }
 }
@@ -947,12 +947,11 @@ void __st_regindpom(int reg, int op, int literal)
 {
   if(firstPass){
     incrementLC(1);
-    // insertLiteral(literal);
   }
   if(secondPass){
     printLC();
     string disp = formatValue(decToHex(literal));
-    outputFile << "92 " << op << reg << " 0" << disp << endl;
+    outputFile << "92 " <<  decToHex(op) <<  decToHex(reg) << " 0" << disp << endl;
     incrementLC(1);
   }
 }
@@ -966,7 +965,7 @@ void __st_regindpom(int reg, int op, string symbol)
     printLC();
     int val = getSymbolValue(symbol);
     string disp = formatValue(decToHex(val));
-    outputFile << "92 " << op << reg << " 0" << disp << endl;
+    outputFile << "92 " <<  decToHex(op) <<  decToHex(reg) << " 0" << disp << endl;
     incrementLC(1);
   }
 }
@@ -1205,7 +1204,7 @@ void __end()
   }
   if(secondPass){
     printLiteralPool(currSection);
-    printSymTableFile(currSection);
     printRelocationTableFile(currSection);
+    printSymTableFile();
   }
 }

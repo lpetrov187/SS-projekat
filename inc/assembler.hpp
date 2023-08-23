@@ -8,7 +8,6 @@ enum csrRegs {
   cause
 };
 
-string decToHex(int reg);
 
 std::string convertPath(const std::string& inputPath);
 
@@ -18,7 +17,7 @@ void openFile(const char* name);
 
 void printSymTable();
 
-void printSymTableFile(int sectionID);
+void printSymTableFile();
 
 void printLiteralTable();
 
@@ -36,7 +35,7 @@ void printLC();
 
 int insertLiteral(int literal);
 
-int insertExternSymbol();
+int insertSymbolInLP(string symb);
 
 int getSymbolValue(string symb);
 
@@ -61,6 +60,8 @@ int getSectionID(string name);
 int getSectionLiteralsNum(int sectionID);
 
 string getSectionName(int sectionID);
+
+string decToHex(int reg);
 
 void __label(string label);
 
@@ -200,6 +201,7 @@ struct literalAttributes{
   string location;
   int locationDecimal;
   int section;
+  string name;
 
   literalAttributes(int v, int sz, int loc, int section){
     this->val = v;
@@ -208,6 +210,7 @@ struct literalAttributes{
     this->location = decToHex(loc);
     this->section = section;
     this->hexValLE = formatValue8(v);
+    this->name = "";
   }
   void setLocation(int loc){
     this->locationDecimal = loc;
