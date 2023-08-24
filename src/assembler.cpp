@@ -155,7 +155,7 @@ void printSymTable()
 
 void printSymTableFile()
 {
-  outputFile << "#.symtab" << endl;
+  outputFile << "###.symtab" << endl;
   outputFile << "Num\tValue\tSize\tType\tBind\t\tNdx\tName" << endl;
 
   for (const auto &element : symbolList)
@@ -192,7 +192,7 @@ void printLiteralPool(int sectionID)
 {
   for(int i = 0; i < literalList.size(); i++){
       if(literalList[i].section == sectionID){
-        outputFile << formatLC(literalList[i].locationDecimal) << ": " << formatValue8(literalList[i].val) << endl;
+        outputFile << formatValue8(literalList[i].val) << endl;
         incrementLC(1);
       }
     }
@@ -235,7 +235,7 @@ void printRelocationTable()
 void printRelocationTableFile(int sectionID)
 {
   string name = getSectionName(sectionID);
-  outputFile << "#.rela" << name << endl;
+  outputFile << "##.rela" << name << endl;
   sortRelocationTable();
   outputFile << "Offset\tType\t\t\t\t\tSymbol\tAddend" << endl;
   for(int i = 0; i < relocationList.size(); i++){
@@ -250,7 +250,7 @@ void printRelocationTableFile(int sectionID)
 
 void printLC()
 {
-  outputFile << formatLC(locationCounter) << ": ";
+  // outputFile << formatLC(locationCounter) << ": ";
 }
 
 int insertLiteral(int literal)
@@ -523,7 +523,6 @@ void __section(string symb)
     if(prevSection != -1)
     {
       printLiteralPool(prevSection);
-      // printSymTableFile(prevSection);
       printRelocationTableFile(prevSection);
     }
     outputFile << "#." << symb << endl;

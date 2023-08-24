@@ -1,18 +1,18 @@
 #.isr
-000: 81 e0 1f fc
-004: 81 e0 2f fc
-008: 92 1f 00 18
-00c: 92 2f 00 18
-010: 92 12 00 00
-014: 93 2e 00 04
-018: 93 1e 00 04
-01c: 93 fe 00 04
-020: cd ab 00 00
-024: 00 00 00 00
-#.rela.isr
+81 e0 1f fc
+81 e0 2f fc
+92 1f 00 18
+92 2f 00 18
+92 12 00 00
+93 2e 00 04
+93 1e 00 04
+93 fe 00 04
+cd ab 00 00
+00 00 00 00
+##.rela.isr
 Offset	Type					Symbol	Addend
 024			R_X86_64_32		001				000
-#.symtab
+###.symtab
 Num	Value	Size	Type	Bind		Ndx	Name
 1:	000		0			NOTYP	GLOB		0		value1	
 2:	000		0			SCTN	LOC		2		.isr	
