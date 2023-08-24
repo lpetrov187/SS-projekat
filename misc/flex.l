@@ -1,6 +1,7 @@
 %{
-  #include "../inc/instruction.hpp"
   #include "../inc/parser.hpp"
+  #include <iostream>  
+  using namespace std;
 %}
 %option outfile="../src/lexer.cpp" header-file="../inc/lexer.hpp"
 %option noyywrap

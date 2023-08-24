@@ -71,7 +71,6 @@
   #include <iostream>
   #include <vector>
   using namespace std;
-  #include "../inc/instruction.hpp"
   #include "../inc/assembler.hpp"
 
   extern int yylex();
@@ -80,7 +79,7 @@
 
   using namespace std;
 
-#line 84 "../src/parser.cpp"
+#line 83 "../src/parser.cpp"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -187,7 +186,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 18 "../misc/bison.y"
+#line 17 "../misc/bison.y"
 
   int ival;
   long lval;
@@ -198,7 +197,7 @@ union YYSTYPE
   char *label;
   char *memident;
 
-#line 202 "../src/parser.cpp"
+#line 201 "../src/parser.cpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -578,16 +577,16 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    83,    83,    84,    87,    88,    89,    90,    91,    92,
-      93,    94,    95,    96,    97,    98,    99,   100,   101,   102,
-     103,   104,   105,   106,   107,   108,   109,   110,   111,   112,
-     113,   114,   115,   116,   117,   118,   119,   123,   129,   132,
-     137,   140,   145,   150,   153,   156,   159,   164,   169,   174,
-     179,   184,   187,   191,   196,   199,   204,   207,   212,   215,
-     220,   223,   228,   231,   234,   237,   240,   243,   246,   249,
-     254,   257,   260,   263,   266,   269,   272,   275,   280,   285,
-     290,   295,   300,   305,   310,   315,   320,   325,   330,   335,
-     340,   345,   348,   351,   356,   359,   362,   367
+       0,    82,    82,    83,    86,    87,    88,    89,    90,    91,
+      92,    93,    94,    95,    96,    97,    98,    99,   100,   101,
+     102,   103,   104,   105,   106,   107,   108,   109,   110,   111,
+     112,   113,   114,   115,   116,   117,   118,   122,   128,   131,
+     136,   139,   144,   149,   152,   155,   158,   163,   168,   173,
+     178,   183,   186,   190,   195,   198,   203,   206,   211,   214,
+     219,   222,   227,   230,   233,   236,   239,   242,   245,   248,
+     253,   256,   259,   262,   265,   268,   271,   274,   279,   284,
+     289,   294,   299,   304,   309,   314,   319,   324,   329,   334,
+     339,   344,   347,   350,   355,   358,   361,   366
 };
 #endif
 
@@ -1501,496 +1500,496 @@ yyreduce:
   switch (yyn)
     {
   case 37:
-#line 123 "../misc/bison.y"
+#line 122 "../misc/bison.y"
        {
     string ret = (yyvsp[0].label);
     __label(ret.substr(0, ret.length()-1));
   }
-#line 1510 "../src/parser.cpp"
+#line 1509 "../src/parser.cpp"
     break;
 
   case 38:
-#line 129 "../misc/bison.y"
+#line 128 "../misc/bison.y"
                   {
     __extern((yyvsp[0].sval));
   }
-#line 1518 "../src/parser.cpp"
+#line 1517 "../src/parser.cpp"
     break;
 
   case 39:
-#line 132 "../misc/bison.y"
+#line 131 "../misc/bison.y"
                {
     __extern((yyvsp[0].sval));
   }
-#line 1526 "../src/parser.cpp"
+#line 1525 "../src/parser.cpp"
     break;
 
   case 40:
-#line 137 "../misc/bison.y"
+#line 136 "../misc/bison.y"
                   {
     __global((yyvsp[0].sval));
   }
-#line 1534 "../src/parser.cpp"
+#line 1533 "../src/parser.cpp"
     break;
 
   case 41:
-#line 140 "../misc/bison.y"
+#line 139 "../misc/bison.y"
                {
     __global((yyvsp[0].sval));
   }
-#line 1542 "../src/parser.cpp"
+#line 1541 "../src/parser.cpp"
     break;
 
   case 42:
-#line 145 "../misc/bison.y"
+#line 144 "../misc/bison.y"
               {
     __section((yyvsp[0].sval));
   }
-#line 1550 "../src/parser.cpp"
+#line 1549 "../src/parser.cpp"
     break;
 
   case 43:
-#line 150 "../misc/bison.y"
+#line 149 "../misc/bison.y"
               {
     __word((yyvsp[0].ival));
   }
-#line 1558 "../src/parser.cpp"
+#line 1557 "../src/parser.cpp"
     break;
 
   case 44:
-#line 153 "../misc/bison.y"
+#line 152 "../misc/bison.y"
              {
     __word((yyvsp[0].sval));
   }
-#line 1566 "../src/parser.cpp"
+#line 1565 "../src/parser.cpp"
     break;
 
   case 45:
-#line 156 "../misc/bison.y"
+#line 155 "../misc/bison.y"
                      {
     __word((yyvsp[0].ival));
   }
-#line 1574 "../src/parser.cpp"
+#line 1573 "../src/parser.cpp"
     break;
 
   case 46:
-#line 159 "../misc/bison.y"
+#line 158 "../misc/bison.y"
                   {
     __word((yyvsp[0].sval));
   }
-#line 1582 "../src/parser.cpp"
+#line 1581 "../src/parser.cpp"
     break;
 
   case 47:
-#line 164 "../misc/bison.y"
+#line 163 "../misc/bison.y"
               {
     __skip((yyvsp[0].ival));
   }
-#line 1590 "../src/parser.cpp"
+#line 1589 "../src/parser.cpp"
     break;
 
   case 48:
-#line 169 "../misc/bison.y"
+#line 168 "../misc/bison.y"
       {
     __halt();
   }
-#line 1598 "../src/parser.cpp"
+#line 1597 "../src/parser.cpp"
     break;
 
   case 49:
-#line 174 "../misc/bison.y"
+#line 173 "../misc/bison.y"
       {
     __int();
   }
-#line 1606 "../src/parser.cpp"
+#line 1605 "../src/parser.cpp"
     break;
 
   case 50:
-#line 179 "../misc/bison.y"
+#line 178 "../misc/bison.y"
       {
     __iret();
   }
-#line 1614 "../src/parser.cpp"
+#line 1613 "../src/parser.cpp"
     break;
 
   case 51:
-#line 184 "../misc/bison.y"
+#line 183 "../misc/bison.y"
               {
     __call((yyvsp[0].ival));
   }
-#line 1622 "../src/parser.cpp"
+#line 1621 "../src/parser.cpp"
     break;
 
   case 52:
-#line 187 "../misc/bison.y"
+#line 186 "../misc/bison.y"
              {
     __call((yyvsp[0].sval));
   }
-#line 1630 "../src/parser.cpp"
+#line 1629 "../src/parser.cpp"
     break;
 
   case 53:
-#line 191 "../misc/bison.y"
+#line 190 "../misc/bison.y"
      {
     __ret();
   }
-#line 1638 "../src/parser.cpp"
+#line 1637 "../src/parser.cpp"
     break;
 
   case 54:
-#line 196 "../misc/bison.y"
+#line 195 "../misc/bison.y"
              {
     __jmp((yyvsp[0].ival));
   }
-#line 1646 "../src/parser.cpp"
+#line 1645 "../src/parser.cpp"
     break;
 
   case 55:
-#line 199 "../misc/bison.y"
+#line 198 "../misc/bison.y"
             {
     __jmp((yyvsp[0].sval));
   }
-#line 1654 "../src/parser.cpp"
+#line 1653 "../src/parser.cpp"
     break;
 
   case 56:
-#line 204 "../misc/bison.y"
+#line 203 "../misc/bison.y"
                              {
     __beq((yyvsp[-4].reg), (yyvsp[-2].reg), (yyvsp[0].ival));
   }
-#line 1662 "../src/parser.cpp"
+#line 1661 "../src/parser.cpp"
     break;
 
   case 57:
-#line 207 "../misc/bison.y"
+#line 206 "../misc/bison.y"
                             {
     __beq((yyvsp[-4].reg), (yyvsp[-2].reg), (yyvsp[0].sval));
   }
-#line 1670 "../src/parser.cpp"
+#line 1669 "../src/parser.cpp"
     break;
 
   case 58:
-#line 212 "../misc/bison.y"
+#line 211 "../misc/bison.y"
                              {
     __bne((yyvsp[-4].reg), (yyvsp[-2].reg), (yyvsp[0].ival));
   }
-#line 1678 "../src/parser.cpp"
+#line 1677 "../src/parser.cpp"
     break;
 
   case 59:
-#line 215 "../misc/bison.y"
+#line 214 "../misc/bison.y"
                             {
     __bne((yyvsp[-4].reg), (yyvsp[-2].reg), (yyvsp[0].sval));
   }
-#line 1686 "../src/parser.cpp"
+#line 1685 "../src/parser.cpp"
     break;
 
   case 60:
-#line 220 "../misc/bison.y"
+#line 219 "../misc/bison.y"
                              {
     __bgt((yyvsp[-4].reg), (yyvsp[-2].reg), (yyvsp[0].ival));
   }
-#line 1694 "../src/parser.cpp"
+#line 1693 "../src/parser.cpp"
     break;
 
   case 61:
-#line 223 "../misc/bison.y"
+#line 222 "../misc/bison.y"
                             {
     __bgt((yyvsp[-4].reg), (yyvsp[-2].reg), (yyvsp[0].sval));
   }
-#line 1702 "../src/parser.cpp"
+#line 1701 "../src/parser.cpp"
     break;
 
   case 62:
-#line 228 "../misc/bison.y"
+#line 227 "../misc/bison.y"
                             {
     __ld_immed((yyvsp[-2].ival), (yyvsp[0].reg));
   }
-#line 1710 "../src/parser.cpp"
+#line 1709 "../src/parser.cpp"
     break;
 
   case 63:
-#line 231 "../misc/bison.y"
+#line 230 "../misc/bison.y"
                           {
     __ld_immed((yyvsp[-2].sval), (yyvsp[0].reg));
   }
-#line 1718 "../src/parser.cpp"
+#line 1717 "../src/parser.cpp"
     break;
 
   case 64:
-#line 234 "../misc/bison.y"
+#line 233 "../misc/bison.y"
                       {
     __ld_memdir((yyvsp[-2].ival), (yyvsp[0].reg));
   }
-#line 1726 "../src/parser.cpp"
+#line 1725 "../src/parser.cpp"
     break;
 
   case 65:
-#line 237 "../misc/bison.y"
+#line 236 "../misc/bison.y"
                    {
     __ld_memdir((yyvsp[-2].sval), (yyvsp[0].reg));
   }
-#line 1734 "../src/parser.cpp"
+#line 1733 "../src/parser.cpp"
     break;
 
   case 66:
-#line 240 "../misc/bison.y"
+#line 239 "../misc/bison.y"
                   {
     __ld_regdir((yyvsp[-2].reg), (yyvsp[0].reg));
   }
-#line 1742 "../src/parser.cpp"
+#line 1741 "../src/parser.cpp"
     break;
 
   case 67:
-#line 243 "../misc/bison.y"
+#line 242 "../misc/bison.y"
                             {
     __ld_regind((yyvsp[-3].reg), (yyvsp[0].reg));
   }
-#line 1750 "../src/parser.cpp"
+#line 1749 "../src/parser.cpp"
     break;
 
   case 68:
-#line 246 "../misc/bison.y"
+#line 245 "../misc/bison.y"
                                          {
     __ld_regindpom((yyvsp[-5].reg), (yyvsp[-3].ival), (yyvsp[0].reg));
   }
-#line 1758 "../src/parser.cpp"
+#line 1757 "../src/parser.cpp"
     break;
 
   case 69:
-#line 249 "../misc/bison.y"
+#line 248 "../misc/bison.y"
                                       {
     __ld_regindpom((yyvsp[-5].reg), (yyvsp[-3].sval), (yyvsp[0].reg));
   }
-#line 1766 "../src/parser.cpp"
+#line 1765 "../src/parser.cpp"
     break;
 
   case 70:
-#line 254 "../misc/bison.y"
+#line 253 "../misc/bison.y"
                            {
     __st_immed((yyvsp[0].ival), (yyvsp[-3].reg));
   }
-#line 1774 "../src/parser.cpp"
+#line 1773 "../src/parser.cpp"
     break;
 
   case 71:
-#line 257 "../misc/bison.y"
+#line 256 "../misc/bison.y"
                           {
     __st_immed((yyvsp[0].sval), (yyvsp[-3].reg));
   }
-#line 1782 "../src/parser.cpp"
+#line 1781 "../src/parser.cpp"
     break;
 
   case 72:
-#line 260 "../misc/bison.y"
+#line 259 "../misc/bison.y"
                       {
     __st_memdir((yyvsp[0].ival), (yyvsp[-2].reg));
   }
-#line 1790 "../src/parser.cpp"
+#line 1789 "../src/parser.cpp"
     break;
 
   case 73:
-#line 263 "../misc/bison.y"
+#line 262 "../misc/bison.y"
                    {
     __st_memdir((yyvsp[0].sval), (yyvsp[-2].reg));
   }
-#line 1798 "../src/parser.cpp"
+#line 1797 "../src/parser.cpp"
     break;
 
   case 74:
-#line 266 "../misc/bison.y"
+#line 265 "../misc/bison.y"
                   {
     __st_regdir((yyvsp[0].reg), (yyvsp[-2].reg));
   }
-#line 1806 "../src/parser.cpp"
+#line 1805 "../src/parser.cpp"
     break;
 
   case 75:
-#line 269 "../misc/bison.y"
+#line 268 "../misc/bison.y"
                             {
     __st_regind((yyvsp[-4].reg), (yyvsp[-1].reg));
   }
-#line 1814 "../src/parser.cpp"
+#line 1813 "../src/parser.cpp"
     break;
 
   case 76:
-#line 272 "../misc/bison.y"
+#line 271 "../misc/bison.y"
                                          {
     __st_regindpom((yyvsp[-6].reg), (yyvsp[-3].reg), (yyvsp[-1].ival));
   }
-#line 1822 "../src/parser.cpp"
+#line 1821 "../src/parser.cpp"
     break;
 
   case 77:
-#line 275 "../misc/bison.y"
+#line 274 "../misc/bison.y"
                                       {
     __st_regindpom((yyvsp[-6].reg), (yyvsp[-3].reg), (yyvsp[-1].sval));
   }
-#line 1830 "../src/parser.cpp"
+#line 1829 "../src/parser.cpp"
     break;
 
   case 78:
-#line 280 "../misc/bison.y"
+#line 279 "../misc/bison.y"
           {
     __push((yyvsp[0].reg));
   }
-#line 1838 "../src/parser.cpp"
+#line 1837 "../src/parser.cpp"
     break;
 
   case 79:
-#line 285 "../misc/bison.y"
+#line 284 "../misc/bison.y"
          {
     __pop((yyvsp[0].reg));
   }
-#line 1846 "../src/parser.cpp"
+#line 1845 "../src/parser.cpp"
     break;
 
   case 80:
-#line 290 "../misc/bison.y"
+#line 289 "../misc/bison.y"
                   {
     __xchg((yyvsp[-2].reg), (yyvsp[0].reg));
   }
-#line 1854 "../src/parser.cpp"
+#line 1853 "../src/parser.cpp"
     break;
 
   case 81:
-#line 295 "../misc/bison.y"
+#line 294 "../misc/bison.y"
                  {
     __add((yyvsp[-2].reg), (yyvsp[0].reg));
   }
-#line 1862 "../src/parser.cpp"
+#line 1861 "../src/parser.cpp"
     break;
 
   case 82:
-#line 300 "../misc/bison.y"
+#line 299 "../misc/bison.y"
                  {
     __sub((yyvsp[-2].reg), (yyvsp[0].reg));
   }
-#line 1870 "../src/parser.cpp"
+#line 1869 "../src/parser.cpp"
     break;
 
   case 83:
-#line 305 "../misc/bison.y"
+#line 304 "../misc/bison.y"
                  {
     __mul((yyvsp[-2].reg), (yyvsp[0].reg));
   }
-#line 1878 "../src/parser.cpp"
+#line 1877 "../src/parser.cpp"
     break;
 
   case 84:
-#line 310 "../misc/bison.y"
+#line 309 "../misc/bison.y"
                  {
     __div((yyvsp[-2].reg), (yyvsp[0].reg));
   }
-#line 1886 "../src/parser.cpp"
+#line 1885 "../src/parser.cpp"
     break;
 
   case 85:
-#line 315 "../misc/bison.y"
+#line 314 "../misc/bison.y"
          {
     __not((yyvsp[0].reg));
   }
-#line 1894 "../src/parser.cpp"
+#line 1893 "../src/parser.cpp"
     break;
 
   case 86:
-#line 320 "../misc/bison.y"
+#line 319 "../misc/bison.y"
                  {
     __and((yyvsp[-2].reg), (yyvsp[0].reg));
   }
-#line 1902 "../src/parser.cpp"
+#line 1901 "../src/parser.cpp"
     break;
 
   case 87:
-#line 325 "../misc/bison.y"
+#line 324 "../misc/bison.y"
                 {
     __or((yyvsp[-2].reg), (yyvsp[0].reg));
   }
-#line 1910 "../src/parser.cpp"
+#line 1909 "../src/parser.cpp"
     break;
 
   case 88:
-#line 330 "../misc/bison.y"
+#line 329 "../misc/bison.y"
                  {
     __xor((yyvsp[-2].reg), (yyvsp[0].reg));
   }
-#line 1918 "../src/parser.cpp"
+#line 1917 "../src/parser.cpp"
     break;
 
   case 89:
-#line 335 "../misc/bison.y"
+#line 334 "../misc/bison.y"
                  {
     __shl((yyvsp[-2].reg), (yyvsp[0].reg));
   }
-#line 1926 "../src/parser.cpp"
+#line 1925 "../src/parser.cpp"
     break;
 
   case 90:
-#line 340 "../misc/bison.y"
+#line 339 "../misc/bison.y"
                  {
     __shr((yyvsp[-2].reg), (yyvsp[0].reg));
   }
-#line 1934 "../src/parser.cpp"
+#line 1933 "../src/parser.cpp"
     break;
 
   case 91:
-#line 345 "../misc/bison.y"
+#line 344 "../misc/bison.y"
                       {
     __csrrd(status, (yyvsp[0].reg));
   }
-#line 1942 "../src/parser.cpp"
+#line 1941 "../src/parser.cpp"
     break;
 
   case 92:
-#line 348 "../misc/bison.y"
+#line 347 "../misc/bison.y"
                          {
     __csrrd(handler, (yyvsp[0].reg));
   }
-#line 1950 "../src/parser.cpp"
+#line 1949 "../src/parser.cpp"
     break;
 
   case 93:
-#line 351 "../misc/bison.y"
+#line 350 "../misc/bison.y"
                        {
     __csrrd(cause, (yyvsp[0].reg));
   }
-#line 1958 "../src/parser.cpp"
+#line 1957 "../src/parser.cpp"
     break;
 
   case 94:
-#line 356 "../misc/bison.y"
+#line 355 "../misc/bison.y"
                       {
     __csrwr((yyvsp[-2].reg), status);
   }
-#line 1966 "../src/parser.cpp"
+#line 1965 "../src/parser.cpp"
     break;
 
   case 95:
-#line 359 "../misc/bison.y"
+#line 358 "../misc/bison.y"
                          {
     __csrwr((yyvsp[-2].reg), handler);
   }
-#line 1974 "../src/parser.cpp"
+#line 1973 "../src/parser.cpp"
     break;
 
   case 96:
-#line 362 "../misc/bison.y"
+#line 361 "../misc/bison.y"
                        {
     __csrwr((yyvsp[-2].reg), cause);
   }
-#line 1982 "../src/parser.cpp"
+#line 1981 "../src/parser.cpp"
     break;
 
   case 97:
-#line 367 "../misc/bison.y"
+#line 366 "../misc/bison.y"
      {
     __end();
   }
-#line 1990 "../src/parser.cpp"
+#line 1989 "../src/parser.cpp"
     break;
 
 
-#line 1994 "../src/parser.cpp"
+#line 1993 "../src/parser.cpp"
 
       default: break;
     }
@@ -2222,7 +2221,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 451 "../misc/bison.y"
+#line 450 "../misc/bison.y"
 
 
 void yyerror(const char *s){

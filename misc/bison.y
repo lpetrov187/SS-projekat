@@ -1,8 +1,6 @@
 %{
   #include <iostream>
   #include <vector>
-  using namespace std;
-  #include "../inc/instruction.hpp"
   #include "../inc/assembler.hpp"
 
   extern int yylex();

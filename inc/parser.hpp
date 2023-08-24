@@ -108,7 +108,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 18 "../misc/bison.y"
+#line 17 "../misc/bison.y"
 
   int ival;
   long lval;

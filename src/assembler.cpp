@@ -26,7 +26,7 @@ string sp = decToHex(14);
 string pc = decToHex(15);
 
 // string inputFile = "../tests/handler.s";
-string inputFile = "../tests/handler2.s";
+// string inputFile = "../tests/handler2.s";
 // string inputFile = "../tests/isr_software.s";
 // string inputFile = "../tests/isr_terminal.s";
 // string inputFile = "../tests/isr_timer.s";
@@ -35,7 +35,8 @@ string inputFile = "../tests/handler2.s";
 // string inputFile = "../tests/math.s";
 // string inputFile = "../tests/input.s";
 
-string ofName = convertPath(inputFile);
+// string ofName = convertPath(inputFile);
+string ofName = "";
 string ifName = "";
 std::vector<std::string> all_args;
 std::ofstream outputFile;
