@@ -520,9 +520,16 @@ void __word(string symb)
     incrementLC(1);
   }
   if(secondPass){
-    int val = getSymbolValue(symb);
+    int num = getSymbolNumber(symb);
+    if(symbolList[num - 1].bind == "GLOB"){
+      relocationList.push_back(
+            relocationAttributes(locationCounter, "R_X86_64_32", num, 0, currSection));
+    } else if(symbolList[num - 1].bind == "LOC"){
+      relocationList.push_back(
+            relocationAttributes(locationCounter, "R_X86_64_32", currSection, getSymbolValue(symb), currSection));
+    }
     printLC();
-    outputFile << formatValue8(val) << endl;
+    outputFile << formatValue8(0) << endl;
     incrementLC(1);
   }
 }
