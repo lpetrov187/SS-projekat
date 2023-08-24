@@ -1,9 +1,9 @@
-#include "../inc/instruction.hpp"
 #include "../inc/lexer.hpp"
 #include "../inc/parser.hpp"
 #include "../inc/assembler.hpp"
 
 #include <sstream>
+#include <vector>
 #include <fstream>
 #include <iostream> 
 #include <iomanip>
