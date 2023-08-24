@@ -36,12 +36,27 @@ string inputFile = "../tests/handler2.s";
 // string inputFile = "../tests/input.s";
 
 string ofName = convertPath(inputFile);
+string ifName = "";
+std::vector<std::string> all_args;
+std::ofstream outputFile;
 
-std::ofstream outputFile(ofName);
-
-int main()
+int main(int argc, char* argv[])
 {
-  openFile(inputFile.c_str());
+  if (argc > 1) {
+    all_args.assign(argv + 1, argv + argc);
+  }
+
+  if(all_args[0] == "-o"){
+    ofName = all_args[1];
+    ifName = all_args[2];
+  }
+  else{
+    ofName = "izlaz.o";
+    ifName = all_args[0];
+  }
+  
+  openFile(ifName.c_str());
+  outputFile.open(ofName, std::ios::trunc);
 
   firstPass = true;
   do
@@ -50,7 +65,7 @@ int main()
   } while (!feof(yyin));
   firstPass = false;
 
-  openFile(inputFile.c_str());
+  openFile(ifName.c_str());
 
   secondPass = true;
   locationCounter = 0;
@@ -298,6 +313,7 @@ int insertSymbolInLP(string symb){
 int getSymbolValue(string symb)
 {
   bool defined = false;
+  cout << symb << endl;
   for (int i = 0; i < symbolList.size(); i++)
   {
     if (symb == symbolList[i].name)
