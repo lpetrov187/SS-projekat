@@ -192,6 +192,16 @@ struct symbolAttributes{
     this->name = name;
     this->sectionUsed = -1;
   }
+  
+  symbolAttributes(string num, int val, string type, string bind, string numSection, string name){
+    this->num = stoi(num);
+    this->valDecimal = val;
+    this->val = decToHex(val);
+    this->type = type;
+    this->bind = bind;
+    this->numSection = stoi(numSection);
+    this->name = name;
+  }
 };
 
 struct literalAttributes{
