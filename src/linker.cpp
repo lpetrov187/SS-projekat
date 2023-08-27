@@ -14,7 +14,7 @@ DoublyLinkedList sectionList = DoublyLinkedList();
 int currSection = -1;
 int prevSection = -1;
 int sectionCounter = 0;
-// vector<string> possibleSections = vector<string>();
+
 vector<symbolAttributesL> fileSymTab = vector<symbolAttributesL>();
 vector<symbolAttributesL> globalSymTab = vector<symbolAttributesL>();
 
@@ -52,8 +52,8 @@ int main(int argc, char* argv[])
           int addonInt = sectionList.getAddon(tmp);
           addonInt++;
           addon = "(" + to_string(addonInt) + ")";
-
-          sectionList.insertAfter(tmp, Section(name, addon, locationCounter));
+          int startAddr = tmp->data.startAddr + tmp->data.size;
+          sectionList.insertAfter(tmp, Section(name, addon, startAddr));
           
           tmp = tmp->next;
         }
@@ -108,21 +108,26 @@ int main(int argc, char* argv[])
         Node* tmp = sectionList.find(sectionName);
         // dohvati pocetak sekcije
         int addr = tmp->data.startAddr;
-        // ubaci element u tabelu globalnih simbola
-        globalSymTab.push_back(fileSymTab[i]);
+        // ubaci element u tabelu simbola sekcije
         tmp->data.sectionSymbols.push_back(fileSymTab[i]);
         tmp->data.sectionSymbols[tmp->data.sectionSymbols.size() - 1].setValue(fileSymTab[i].valDecimal + addr);
-        globalSymTab[globalSymTab.size() - 1].setValue(fileSymTab[i].valDecimal + addr);
+
+        // ubaci element u tabelu globalnih simbola
+        globalSymTab.push_back(fileSymTab[i]);
+        // globalSymTab[globalSymTab.size() - 1].setValue(fileSymTab[i].valDecimal + addr);
+        globalSymTab[globalSymTab.size() - 1].setSecName(sectionName);
+
       }
     }
-
+    // azuriraj sekcije i simbole iza trenutne
     sectionList.updateAfter(tmp);
-
     inputFile.close();
   }
 
+  // azuriraj globalSymTab
+  updateGlobalSymTab();
   for(const auto &element: globalSymTab){
-    cout << element.name << "\t\t\t\t" << element.val << endl;
+    cout << element.name << "\t\t" << element.val << "\t" << element.sectionName << endl;
   }
 
   sectionList.display();
@@ -157,4 +162,19 @@ int hexToInt(const string& hexStr) {
   char* endPtr;
   int result = strtol(hexStr.c_str(), &endPtr, 16);
   return result;
+}
+
+void updateGlobalSymTab()
+{
+  Node *curr = sectionList.head;
+  while(curr){
+    for(const auto &element: curr->data.sectionSymbols){
+      for(int i = 0; i < globalSymTab.size(); i++){
+        if(element.name == globalSymTab[i].name && element.valDecimal != globalSymTab[i].valDecimal){
+          globalSymTab[i].setValue(element.valDecimal);
+        }
+      }
+    }
+    curr = curr->next;
+  }
 }

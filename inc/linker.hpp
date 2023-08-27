@@ -13,6 +13,8 @@ string decToHex2(int val);
 
 int hexToInt(const string& hexStr);
 
+void updateGlobalSymTab();
+
 struct symbolAttributesL{
   int num;
   string val;
@@ -23,6 +25,7 @@ struct symbolAttributesL{
   int numSection;
   string name;
   int sectionUsed;
+  string sectionName;
   
   symbolAttributesL(string num, int val, string type, string bind, string numSection, string name){
     this->num = stoi(num);
@@ -37,6 +40,39 @@ struct symbolAttributesL{
   void setValue(int value){
     this->valDecimal = value;
     this->val = decToHex2(value);
+  }
+
+  void setSecName(string nam){
+    this->sectionName = nam;
+  }
+};
+
+struct relocationAttributesL{
+  int offset;
+  string offsetHex;
+  string type;
+  int symbol;
+  int addend;
+  string addendHex;
+  int section;
+
+  relocationAttributesL(int off, string typ, int symb, int add, int sec){
+    this->offset = off;
+    this->offsetHex = decToHex(off);
+    this->type = typ;
+    this->symbol = symb;
+    this->section = sec;
+    this->addend = add;
+    this->addendHex = decToHex(add);
+  }
+
+  relocationAttributesL(){
+
+  }
+
+  void setOffset(int off){
+    this->offsetHex = decToHex(off);
+    this->offset = off;
   }
 };
 
@@ -78,11 +114,11 @@ public:
 };
 
 class DoublyLinkedList {
-private:
+
+public:
     Node* head;
     Node* tail;
 
-public:
     DoublyLinkedList() : head(nullptr), tail(nullptr) {}
 
     void append(const Section& section) {
@@ -103,6 +139,10 @@ public:
             string sz = decToHex2(current->data.size);
             string sAddr = decToHex2(current->data.startAddr);
             cout << "Section: " << current->data.realName << " | Size: " << sz << " | Start addr: " << sAddr << endl;
+            
+            for(const auto &element: current->data.sectionSymbols){
+                cout << element.name << "\t" << element.val << endl;
+            }
             current = current->next;
         }
     }
