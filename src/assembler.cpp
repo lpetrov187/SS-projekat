@@ -383,7 +383,7 @@ string formatValue8(int val)
 string getOffset(int literal)
 {
   int addr = insertLiteral(literal);
-  string offset = decToHex(addr - locationCounter);
+  string offset = decToHex(addr - locationCounter - 4);
   return offset;
 }
 
@@ -395,7 +395,7 @@ string getOffset(string symbol)
     symbolList[num - 1].sectionUsed = currSection;
   }
   
-  string offset = decToHex(addr - locationCounter);
+  string offset = decToHex(addr - locationCounter - 4);
   return offset;
 }
 

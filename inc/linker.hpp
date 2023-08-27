@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-// #include "assembler.hpp"
 
 using namespace std;
 
@@ -14,6 +13,16 @@ string decToHex2(int val);
 int hexToInt(const string& hexStr);
 
 void updateGlobalSymTab();
+
+vector<string> splitString(string line);
+
+void joinSections();
+
+void updateSectionSymbols();
+
+void applyRelocationTable();
+
+string formatValueLE(int val);
 
 struct symbolAttributesL{
   int num;
@@ -54,7 +63,7 @@ struct relocationAttributesL{
   int symbol;
   int addend;
   string addendHex;
-  int section;
+  string section;
 
   relocationAttributesL(int off, string typ, int symb, int add, int sec){
     this->offset = off;
@@ -66,8 +75,14 @@ struct relocationAttributesL{
     this->addendHex = decToHex(add);
   }
 
-  relocationAttributesL(){
-
+  relocationAttributesL(string off, string type, string symbol, string addend, string section){
+    this->offset = hexToInt(off);
+    this->offsetHex = off;
+    this->type = type;
+    this->symbol = hexToInt(symbol);
+    this->section = section;
+    this->addendHex = addend;
+    this->addend = hexToInt(addend);
   }
 
   void setOffset(int off){
@@ -86,9 +101,10 @@ public:
     string name;
     
 
+    vector<relocationAttributesL> relocationTable = vector<relocationAttributesL>();
     vector<symbolAttributesL> sectionSymbols = vector<symbolAttributesL>();
     vector<string> content = vector<string>();
-    vector<string> relocationTable = vector<string>();
+    // vector<string> relocationTable = vector<string>();
 
     Section(string sectionName)
         : name(sectionName) {}
@@ -138,10 +154,16 @@ public:
         while (current) {
             string sz = decToHex2(current->data.size);
             string sAddr = decToHex2(current->data.startAddr);
-            cout << "Section: " << current->data.realName << " | Size: " << sz << " | Start addr: " << sAddr << endl;
-            
-            for(const auto &element: current->data.sectionSymbols){
-                cout << element.name << "\t" << element.val << endl;
+            string eAddr = decToHex2(current->data.endAddr);
+            cout << "Section: " << current->data.realName << " | Size: " << sz << " | Start addr: " << sAddr << " | End addr: " << eAddr << endl;
+            // for(const auto &element: current->data.relocationTable){
+            //     cout << element.offset << "\t" << element.addend << "\t" << element.symbol << endl;
+            // }
+            // for(const auto &element: current->data.sectionSymbols){
+            //     cout << element.name << "\t" << element.val << endl;
+            // }
+            for(const auto &element: current->data.content){
+                cout << element << endl;
             }
             current = current->next;
         }
@@ -181,6 +203,7 @@ public:
         Node* curr = node->next;
         while(curr){
             curr->data.startAddr += val;
+            curr->data.endAddr += val;
             for(int i = 0; i < curr->data.sectionSymbols.size(); i++){
                 curr->data.sectionSymbols[i].setValue(curr->data.sectionSymbols[i].valDecimal + val);
             }
