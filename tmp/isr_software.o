@@ -16,4 +16,4 @@ Offset	Type					Symbol	Addend
 Num	Value	Size	Type	Bind		Ndx	Name
 1:	000		0			NOTYP	GLOB		0		value1	
 2:	000		0			SCTN	LOC		2		.isr	
-3:	000		0			NOTYP	GLOB		2		isr_software	
+3:	000		0			NOTYP	GLOB		2		isr_software
