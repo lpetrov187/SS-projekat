@@ -156,12 +156,14 @@ public:
             string sAddr = decToHex2(current->data.startAddr);
             string eAddr = decToHex2(current->data.endAddr);
             cout << "Section: " << current->data.realName << " | Size: " << sz << " | Start addr: " << sAddr << " | End addr: " << eAddr << endl;
-            // for(const auto &element: current->data.relocationTable){
-            //     cout << element.offset << "\t" << element.addend << "\t" << element.symbol << endl;
-            // }
-            // for(const auto &element: current->data.sectionSymbols){
-            //     cout << element.name << "\t" << element.val << endl;
-            // }
+            if(current->data.name == ".my_data"){
+                for(const auto &element: current->data.relocationTable){
+                    // cout << element.offset << "\t\t\t" << element.addend << "\t" << element.symbol << endl;
+                }
+                for(const auto &element: current->data.sectionSymbols){
+                    // cout << element.name << "\t\t\t" << element.val << "\t" << element.num << endl;
+                }
+            }
             for(const auto &element: current->data.content){
                 cout << element << endl;
             }
