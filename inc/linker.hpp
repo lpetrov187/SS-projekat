@@ -233,7 +233,20 @@ public:
                 }
             
             for(const auto &element: current->data.content){
-                outputFileL << decToHex2(LC) << ": " << element << endl;
+                cout << element << endl;
+                LC += 4;
+            }
+            LC = current->data.startAddr;
+
+            for(int i = 0; i < current->data.content.size(); i++){
+                if(i % 2 == 0){
+                    outputFileL << decToHex2(LC) << ": " << current->data.content[i] << " ";
+                    if(i == current->data.content.size() - 1){
+                        outputFileL << endl;
+                    }
+                } else {
+                    outputFileL  << current->data.content[i] << endl;                    
+                }
                 LC += 4;
             }
             current = current->next;
