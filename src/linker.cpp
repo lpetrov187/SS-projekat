@@ -18,15 +18,39 @@ int sectionCounter = 0;
 
 vector<symbolAttributesL> fileSymTab = vector<symbolAttributesL>();
 vector<symbolAttributesL> globalSymTab = vector<symbolAttributesL>();
+vector<string> sectionPlaces = vector<string>();
+vector<string> inputFiles = vector<string>();
 
+string outputFile = "";
 
 int main(int argc, char* argv[])
 {
   if (argc > 1) {
     all_args.assign(argv + 1, argv + argc);
-  }  
+  }
 
-  for(const auto &element: all_args){
+  int i = 1;
+  while(all_args[i].substr(0, 6) == "-place"){
+    sectionPlaces.push_back(all_args[i]);
+    i++;
+  }
+  // preskoci -o
+  i++;
+  outputFile = all_args[i];
+  // predji na prvi ulazni fajl
+  i++;
+
+  while(i < all_args.size()){
+    inputFiles.push_back(all_args[i]);
+    i++;
+  }
+
+  // cout << outputFile << endl;
+  // for(const auto &el: inputFiles){
+  //   cout << el << endl;
+  // }
+
+  for(const auto &element: inputFiles){
     openFileForReading(element);
 
     fileSymTab.clear();
@@ -98,6 +122,8 @@ int main(int argc, char* argv[])
 
     inputFile.close();
   }
+  // preraspodeli sekcije
+  reallocateSections();
 
   // azuriraj globalSymTab
   updateGlobalSymTab();
@@ -108,12 +134,9 @@ int main(int argc, char* argv[])
   // spoji sekcije iz vise fajlova
   joinSections();
 
-
-  for(const auto &element: globalSymTab){
-    cout << element.name << "\t\t" << element.val << endl;
-  }
-
-
+  // for(const auto &element: globalSymTab){
+  //   cout << element.name << "\t\t" << element.val << endl;
+  // }
   sectionList.display();
 }
 
@@ -183,13 +206,13 @@ void joinSections(){
     if(curr->next){
       Node* nextNode = curr->next;
       while(curr->data.name == nextNode->data.name){
-        // for(int i = 0; i < curr->data.content.size(); i++){
-        //   curr->data.content.push_back(curr->data.content[i]);
-        // }
+        for(int i = 0; i < nextNode->data.content.size(); i++){
+          curr->data.content.push_back(nextNode->data.content[i]);
+        }
         curr->data.size += nextNode->data.size;
         curr->data.endAddr += nextNode->data.size;
-
-        nextNode = nextNode->next;
+        sectionList.deleteNode(nextNode->data);
+        nextNode = curr->next;
       }
     }
     curr = curr->next;
@@ -268,4 +291,67 @@ string formatValueLE(int val)
            << std::setw(2) << (val >> 16 & 0xFF) << " "
            << std::setw(2) << (val >> 24 & 0xFF);
     return stream.str();
+}
+
+void reallocateSections()
+{
+  Node* curr = sectionList.head;
+  vector<string> tmp = vector<string>();
+  int newStartAddr = 0;
+  for(const auto& el: sectionPlaces){
+    tmp = getValues(el);
+    while(curr){
+      if(curr->data.name == tmp[0]){
+        // cout << tmp[0] 
+        updateSectionValues(curr->data.name, hexToInt(tmp[1]));
+        newStartAddr = curr->data.endAddr;
+        break;
+      }
+      curr = curr->next;
+    }
+    curr = sectionList.head;
+  }
+  while(curr){
+    if(!curr->data.reallocated){
+      updateSectionValues(curr->data.name, newStartAddr);
+      newStartAddr = curr->data.endAddr;
+    }
+    curr = curr->next;
+  }
+}
+
+vector<string> getValues(string input){
+  // Find the position of '@' and '=' in the string
+  size_t atPos = input.find('@');
+  size_t equalPos = input.find('=');
+  vector<string> output = vector<string>();
+  if (atPos != std::string::npos && equalPos != std::string::npos) {
+    // Extract the substrings based on the positions
+    std::string value1 = "." + input.substr(equalPos + 1, atPos - equalPos - 1);
+    std::string value2 = input.substr(atPos + 3);
+
+    output.push_back(value1);
+    output.push_back(value2);
+    return output;
+  } else {
+    std::cout << "Substring not found in the input." << std::endl;
+    return output;
+  }
+}
+
+void updateSectionValues(string name, int val){
+  Node* curr = sectionList.head;
+
+  while(curr){
+    if(curr->data.name == name){
+      curr->data.startAddr = val;
+      curr->data.endAddr = curr->data.size + val;
+      for(int i = 0; i < curr->data.sectionSymbols.size(); i++){
+        int newValue = curr->data.sectionSymbols[i].valDecimal + val;
+        curr->data.sectionSymbols[i].setValue(newValue);
+      }
+      curr->data.reallocated = true;
+    }
+    curr = curr->next;
+  }
 }

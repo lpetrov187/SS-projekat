@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
     ofName = "izlaz.o";
     ifName = all_args[0];
   }
-  
+
   openFile(ifName.c_str());
   outputFile.open(ofName, std::ios::trunc);
 

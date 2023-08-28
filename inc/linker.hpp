@@ -24,6 +24,12 @@ void applyRelocationTable();
 
 string formatValueLE(int val);
 
+void reallocateSections();
+
+void updateSectionValues(string name, int val);
+
+vector<string> getValues(string input);
+
 struct symbolAttributesL{
   int num;
   string val;
@@ -99,7 +105,7 @@ public:
 
     string realName;
     string name;
-    
+    bool reallocated = false;
 
     vector<relocationAttributesL> relocationTable = vector<relocationAttributesL>();
     vector<symbolAttributesL> sectionSymbols = vector<symbolAttributesL>();
@@ -154,17 +160,17 @@ public:
             string sz = decToHex2(current->data.size);
             string sAddr = decToHex2(current->data.startAddr);
             string eAddr = decToHex2(current->data.endAddr);
-            cout << "Section: " << current->data.realName << " | Size: " << sz << " | Start addr: " << sAddr << " | End addr: " << eAddr << endl;
-            if(current->data.name == ".my_data"){
+            cout << "Section: " << current->data.name << " | Size: " << sz << " | Start addr: " << sAddr << " | End addr: " << eAddr << endl;
+            
                 for(const auto &element: current->data.relocationTable){
                     // cout << element.offset << "\t\t\t" << element.addend << "\t" << element.symbol << endl;
                 }
                 for(const auto &element: current->data.sectionSymbols){
-                    // cout << element.name << "\t\t\t" << element.val << "\t" << element.num << endl;
+                    cout << element.name << "\t\t\t" << element.val << "\t" << element.num << endl;
                 }
-            }
+            
             for(const auto &element: current->data.content){
-                cout << element << endl;
+                // cout << element << endl;
             }
             current = current->next;
         }
@@ -217,6 +223,28 @@ public:
         string addonS = node->data.realName.substr(len - 2, len - 1);
         int addon = stoi(addonS);
         return addon;
+    }
+
+    void deleteNode(Section val) {
+        Node* current = head;
+        while (current) {
+            if (current->data.realName == val.realName) {
+                if (current->prev) {
+                    current->prev->next = current->next;
+                } else {
+                    head = current->next;
+                }
+                if (current->next) {
+                    current->next->prev = current->prev;
+                } else {
+                    // If the deleted node is the tail, update the tail pointer
+                    tail = current->prev;
+                }
+                delete current;
+                return;
+            }
+            current = current->next;
+        }
     }
 
     ~DoublyLinkedList() {
