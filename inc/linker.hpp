@@ -232,11 +232,11 @@ public:
                     // cout << element.name << "\t\t\t" << element.val << "\t" << element.num << endl;
                 }
             
-            for(const auto &element: current->data.content){
-                cout << element << endl;
-                LC += 4;
-            }
-            LC = current->data.startAddr;
+            // for(const auto &element: current->data.content){
+            //     cout << element << endl;
+            //     LC += 4;
+            // }
+            // LC = current->data.startAddr;
 
             for(int i = 0; i < current->data.content.size(); i++){
                 if(i % 2 == 0){
