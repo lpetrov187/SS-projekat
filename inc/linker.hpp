@@ -104,7 +104,6 @@ public:
     vector<relocationAttributesL> relocationTable = vector<relocationAttributesL>();
     vector<symbolAttributesL> sectionSymbols = vector<symbolAttributesL>();
     vector<string> content = vector<string>();
-    // vector<string> relocationTable = vector<string>();
 
     Section(string sectionName)
         : name(sectionName) {}
