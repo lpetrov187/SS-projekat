@@ -10,6 +10,7 @@ string ofName = "";
 string ifName = "";
 int startAddr = 0;
 int locationCounter = 0;
+int locationCoutnerOutput = 0;
 ifstream inputFile;
 DoublyLinkedList sectionList = DoublyLinkedList();
 int currSection = -1;
@@ -21,10 +22,12 @@ vector<symbolAttributesL> globalSymTab = vector<symbolAttributesL>();
 vector<string> sectionPlaces = vector<string>();
 vector<string> inputFiles = vector<string>();
 
-string outputFile = "";
+
 
 int main(int argc, char* argv[])
 {
+  // string s= "f0000000";
+  // cout << stoi(s,0,16) << endl;
   if (argc > 1) {
     all_args.assign(argv + 1, argv + argc);
   }
@@ -36,7 +39,7 @@ int main(int argc, char* argv[])
   }
   // preskoci -o
   i++;
-  outputFile = all_args[i];
+  outputFileName = all_args[i];
   // predji na prvi ulazni fajl
   i++;
 
@@ -302,19 +305,18 @@ void reallocateSections()
     tmp = getValues(el);
     while(curr){
       if(curr->data.name == tmp[0]){
-        // cout << tmp[0] 
-        updateSectionValues(curr->data.name, hexToInt(tmp[1]));
-        newStartAddr = curr->data.endAddr;
-        break;
+        newStartAddr = updateSectionValues(curr->data.name, hexToInt(tmp[1]));
       }
       curr = curr->next;
     }
     curr = sectionList.head;
   }
+
   while(curr){
     if(!curr->data.reallocated){
-      updateSectionValues(curr->data.name, newStartAddr);
-      newStartAddr = curr->data.endAddr;
+      newStartAddr = updateSectionValues(curr->data.name, newStartAddr);
+      // newStartAddr = curr->data.endAddr;
+      curr->data.reallocated = true;
     }
     curr = curr->next;
   }
@@ -339,8 +341,9 @@ vector<string> getValues(string input){
   }
 }
 
-void updateSectionValues(string name, int val){
+int updateSectionValues(string name, int val){
   Node* curr = sectionList.head;
+  int endAddr = 0;
 
   while(curr){
     if(curr->data.name == name){
@@ -350,8 +353,15 @@ void updateSectionValues(string name, int val){
         int newValue = curr->data.sectionSymbols[i].valDecimal + val;
         curr->data.sectionSymbols[i].setValue(newValue);
       }
+      endAddr = curr->data.endAddr;
+      val = endAddr;
       curr->data.reallocated = true;
     }
     curr = curr->next;
   }
+  return endAddr;
+}
+
+void displayHexLC(int value) {
+    std::cout << std::setw(4) << std::setfill('0') << std::hex << value << ": ";
 }
