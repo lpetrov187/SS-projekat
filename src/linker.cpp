@@ -26,8 +26,6 @@ vector<string> inputFiles = vector<string>();
 
 int main(int argc, char* argv[])
 {
-  // string s= "f0000000";
-  // cout << stoi(s,0,16) << endl;
   if (argc > 1) {
     all_args.assign(argv + 1, argv + argc);
   }
@@ -47,11 +45,6 @@ int main(int argc, char* argv[])
     inputFiles.push_back(all_args[i]);
     i++;
   }
-
-  // cout << outputFile << endl;
-  // for(const auto &el: inputFiles){
-  //   cout << el << endl;
-  // }
 
   for(const auto &element: inputFiles){
     openFileForReading(element);
@@ -122,6 +115,7 @@ int main(int argc, char* argv[])
     updateSectionSymbols();
     // azuriraj sekcije i simbole iza trenutne
     sectionList.updateAfter(tmp);
+
 
     inputFile.close();
   }
