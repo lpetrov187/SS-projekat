@@ -1,12 +1,12 @@
 #.isr
-81 e0 1f fc
-81 e0 2f fc
-92 1f 00 14
-92 2f 00 14
+81 e0 1c ff
+81 e0 2c ff
+92 1f 04 01
+92 2f 04 01
 92 12 00 00
-93 2e 00 04
-93 1e 00 04
-93 fe 00 04
+93 2e 04 00
+93 1e 04 00
+93 fe 04 00
 cd ab 00 00
 00 00 00 00
 ##.rela.isr
@@ -16,4 +16,4 @@ Offset	Type					Symbol	Addend
 Num	Value	Size	Type	Bind		Ndx	Name
 1:	000		0			NOTYP	GLOB		0		value1	
 2:	000		0			SCTN	LOC		2		.isr	
-3:	000		0			NOTYP	GLOB		2		isr_software
+3:	000		0			NOTYP	GLOB		2		isr_software	

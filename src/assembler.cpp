@@ -356,15 +356,48 @@ string formatLC(int lc)
   return val;
 }
 
-string formatValue(string val)
-{
-  if(val.length() == 1){
-    val = "0 0" + val;
+// string formatValue(string val)
+// {
+//   if(val.length() == 1){
+//     val = "0 0" + val;
+//   }
+//   else if(val.length() == 2){
+//     val = "0 " + val;
+//   }
+//   return val;
+// }
+
+string formatValue(string value) {
+    // std::ostringstream hexStream;
+
+    // // Convert the integer to hex string
+    // hexStream << std::hex << std::setfill('0') << std::setw(3) << (value & 0xFFF);
+
+    // // Split the hex string into two parts: first digit and last two digits
+    // std::string hexString = hexStream.str();
+    // std::string firstDigit = hexString.substr(0, 1);
+    // std::string lastTwoDigits = hexString.substr(1);
+
+    // // Create the little endian hex value format "0 00"
+    // std::string littleEndianHex = firstDigit + " " + lastTwoDigits;
+
+    // return littleEndianHex;
+
+  string val;
+  if(value.length() == 1){
+    val = "00" + value;
   }
-  else if(val.length() == 2){
-    val = "0 " + val;
+  else if(value.length() == 2){
+    val = "0" + value;
   }
-  return val;
+  else{
+    val = value;
+  }
+
+  string higherBytes = val.substr(0, 2);
+  string lowerBytes = val.substr(2, 1);
+
+  return lowerBytes + " " + higherBytes;
 }
 
 string formatValue8(int val)
@@ -617,11 +650,11 @@ void __iret()
         incrementLC(1);
 
         printLC();
-        outputFile << "96 " << status << sp << " 0f fc" << endl; // status <= mem[sp - 4]
+        outputFile << "96 " << status << sp << " 0c ff" << endl; // status <= mem[sp - 4]
         incrementLC(1);
 
         printLC();
-        outputFile << "92 " << pc << sp << " 0f f8" << endl; // pc <= mem[sp - 8]
+        outputFile << "92 " << pc << sp << " 08 ff" << endl; // pc <= mem[sp - 8]
         incrementLC(1);
       }
     }
@@ -663,7 +696,7 @@ void __ret()
   if(secondPass){
     printLC();
     incrementLC(1);
-    outputFile << "93 " << pc << sp << " 00 04" << endl; // pc <= mem[sp]; sp <= sp + 4
+    outputFile << "93 " << pc << sp << " 04 00" << endl; // pc <= mem[sp]; sp <= sp + 4
   }
 }
 
@@ -1003,7 +1036,7 @@ void __push(int reg)
     incrementLC(1);
     string hexVal = decToHex(reg);
 
-    outputFile << "81 " << sp << "0 " << hexVal << "f fc" << endl; // sp <= sp - 4; mem[sp] <= reg
+    outputFile << "81 " << sp << "0 " << hexVal << "c ff" << endl; // sp <= sp - 4; mem[sp] <= reg
   }
 }
 
@@ -1016,7 +1049,7 @@ void __pop(int reg)
     printLC();
     incrementLC(1);
     string hexVal = decToHex(reg);
-    outputFile << "93 " << hexVal << sp << " 00 04" << endl; // reg <= mem[sp]; sp <= sp + 4
+    outputFile << "93 " << hexVal << sp << " 04 00" << endl; // reg <= mem[sp]; sp <= sp + 4
   }
 }
 

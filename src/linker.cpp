@@ -57,6 +57,7 @@ int main(int argc, char* argv[])
     bool section = false;
     bool rela = false;
     bool symtab = false;
+    bool inserted = false;
 
     while (getline(inputFile, line)){
       if(line[0] == '#' && line[1] != '#') {
@@ -75,7 +76,7 @@ int main(int argc, char* argv[])
           addon = "(" + to_string(addonInt) + ")";
           int startAddr = tmp->data.startAddr + tmp->data.size;
           sectionList.insertAfter(tmp, Section(name, addon, startAddr));
-          
+          inserted = true;
           tmp = tmp->next;
         }
       } else if(line[0] == '#' && line[1] == '#' && line[2] != '#'){
@@ -114,9 +115,9 @@ int main(int argc, char* argv[])
     // azuriraj tabelu simbola sekcije 
     updateSectionSymbols();
     // azuriraj sekcije i simbole iza trenutne
-    sectionList.updateAfter(tmp);
-
-
+    if(inserted)
+      sectionList.updateAfter(tmp);
+    
     inputFile.close();
   }
   // preraspodeli sekcije
@@ -125,15 +126,18 @@ int main(int argc, char* argv[])
   // azuriraj globalSymTab
   updateGlobalSymTab();
   
+  // azuriraj globalne simbole u sekcijama u kojim se koriste
+  updateSectionSymbols2();
+
   // TODO: popravi vrednosti preko relokacione tabele
   applyRelocationTable();
 
   // spoji sekcije iz vise fajlova
   joinSections();
 
-  // for(const auto &element: globalSymTab){
-  //   cout << element.name << "\t\t" << element.val << endl;
-  // }
+  for(const auto &element: globalSymTab){
+    cout << element.name << "\t\t" << element.val << endl;
+  }
   sectionList.display();
 }
 
@@ -173,7 +177,7 @@ void updateGlobalSymTab()
   while(curr){
     for(const auto &element: curr->data.sectionSymbols){
       for(int i = 0; i < globalSymTab.size(); i++){
-        if(element.name == globalSymTab[i].name && element.valDecimal != globalSymTab[i].valDecimal){
+        if(element.name == globalSymTab[i].name && element.sectionName != ""){
           globalSymTab[i].setValue(element.valDecimal);
         }
       }
@@ -218,32 +222,36 @@ void joinSections(){
 
 void updateSectionSymbols(){
   for(int i = 0; i < fileSymTab.size(); i++){
+    bool loc = false;
     if(fileSymTab[i].bind == "GLOB"){
-      // ubaci u tabelu simbola sekcije simbole koji su uvezeni
-      string sectionName = "";
-      for(int j = 0; j < fileSymTab.size(); j++){
-        if(fileSymTab[j].type == "SCTN"){
-          sectionName = fileSymTab[j].name;
+      for(int j = 0; j < fileSymTab.size(); j++){ // nadji sekciju u kojoj je dati simbol
+        if(fileSymTab[i].numSection == fileSymTab[j].num){
+          string sectionName = fileSymTab[j].name;
           Node* tmp = sectionList.find(sectionName);
           // dohvati pocetak sekcije
           int addr = tmp->data.startAddr;
           // ubaci element u tabelu simbola sekcije
+          loc = true;
           tmp->data.sectionSymbols.push_back(fileSymTab[i]);
-          if(fileSymTab[i].numSection != 0){
-            tmp->data.sectionSymbols[tmp->data.sectionSymbols.size() - 1].setValue(fileSymTab[i].valDecimal + addr);
-          }
+          tmp->data.sectionSymbols[tmp->data.sectionSymbols.size() - 1].setValue(fileSymTab[i].valDecimal + addr);
+          tmp->data.sectionSymbols[tmp->data.sectionSymbols.size() - 1].setSecName(fileSymTab[j].name);
+          globalSymTab.push_back(fileSymTab[i]);
+          globalSymTab[globalSymTab.size() - 1].setValue(fileSymTab[i].valDecimal + addr);
+          globalSymTab[globalSymTab.size() - 1].setSecName(fileSymTab[j].name);
+        } else if(fileSymTab[j].type == "SCTN"){
+          string sectionName = fileSymTab[j].name;
+          Node* tmp = sectionList.find(sectionName);
+          // dohvati pocetak sekcije
+          int addr = tmp->data.startAddr;
+          // ubaci element u tabelu simbola sekcije
+          loc = true;
+          tmp->data.sectionSymbols.push_back(fileSymTab[i]);
+          tmp->data.sectionSymbols[tmp->data.sectionSymbols.size() - 1].setValue(0);
         }
       }
-      // ubaci element u tabelu globalnih simbola
-      bool defined = false;
-      for(const auto &el: globalSymTab){
-        if(el.name == fileSymTab[i].name)
-          defined = true;
-      }
-      if(!defined)
-        globalSymTab.push_back(fileSymTab[i]);
     }
   }
+
 }
 
 void applyRelocationTable(){
@@ -280,9 +288,6 @@ void applyRelocationTable(){
 string formatValueLE(int val)
 {
   std::stringstream stream;
-  if(val == -1){
-    return "UND";
-  }
   stream << std::setfill('0') << std::setw(2) << std::hex << (val & 0xFF) << " "
            << std::setw(2) << (val >> 8 & 0xFF) << " "
            << std::setw(2) << (val >> 16 & 0xFF) << " "
@@ -341,11 +346,14 @@ int updateSectionValues(string name, int val){
 
   while(curr){
     if(curr->data.name == name){
+      int oldSAddr = curr->data.startAddr;
       curr->data.startAddr = val;
       curr->data.endAddr = curr->data.size + val;
       for(int i = 0; i < curr->data.sectionSymbols.size(); i++){
-        int newValue = curr->data.sectionSymbols[i].valDecimal + val;
-        curr->data.sectionSymbols[i].setValue(newValue);
+        if(curr->data.sectionSymbols[i].sectionName != ""){
+          int newValue = curr->data.sectionSymbols[i].valDecimal - oldSAddr + val;
+          curr->data.sectionSymbols[i].setValue(newValue);
+        }
       }
       endAddr = curr->data.endAddr;
       val = endAddr;
@@ -358,4 +366,21 @@ int updateSectionValues(string name, int val){
 
 void displayHexLC(int value) {
     std::cout << std::setw(4) << std::setfill('0') << std::hex << value << ": ";
+}
+
+void updateSectionSymbols2(){
+  Node* curr = sectionList.head;
+
+  while(curr){
+    for(int i = 0; i < curr->data.sectionSymbols.size(); i++){
+      if(curr->data.sectionSymbols[i].sectionName == ""){
+        for(const auto &globalEl: globalSymTab){
+          if(curr->data.sectionSymbols[i].name == globalEl.name){
+            curr->data.sectionSymbols[i].setValue(globalEl.valDecimal);
+          }
+        }
+      }
+    }
+    curr = curr->next;
+  }
 }

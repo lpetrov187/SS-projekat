@@ -36,6 +36,8 @@ vector<string> getValues(string input);
 
 void displayHexLC(int value);
 
+void updateSectionSymbols2();
+
 struct symbolAttributesL{
   int num;
   string val;
@@ -223,17 +225,17 @@ public:
             string sAddr = decToHex2(current->data.startAddr);
             string eAddr = decToHex2(current->data.endAddr);
             int LC = current->data.startAddr;
-            cout << "Section: " << current->data.name << " | Size: " << sz << " | Start addr: " << sAddr << " | End addr: " << eAddr << endl;
+            cout << "Section: " << current->data.realName << " | Size: " << sz << " | Start addr: " << sAddr << " | End addr: " << eAddr << endl;
             
                 for(const auto &element: current->data.relocationTable){
                     // cout << element.offset << "\t\t\t" << element.addend << "\t" << element.symbol << endl;
                 }
                 for(const auto &element: current->data.sectionSymbols){
-                    // cout << element.name << "\t\t\t" << element.val << "\t" << element.num << endl;
+                    // cout << element.name << "\t" << element.val << "\t" << element.sectionName << endl;
                 }
             
             // for(const auto &element: current->data.content){
-            //     cout << element << endl;
+                // cout << element << endl;
             //     LC += 4;
             // }
             // LC = current->data.startAddr;

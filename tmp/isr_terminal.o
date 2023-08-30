@@ -1,5 +1,5 @@
 #.isr
-93 fe 00 04
+93 fe 04 00
 ##.rela.isr
 Offset	Type					Symbol	Addend
 ###.symtab
