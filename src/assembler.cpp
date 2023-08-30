@@ -356,33 +356,7 @@ string formatLC(int lc)
   return val;
 }
 
-// string formatValue(string val)
-// {
-//   if(val.length() == 1){
-//     val = "0 0" + val;
-//   }
-//   else if(val.length() == 2){
-//     val = "0 " + val;
-//   }
-//   return val;
-// }
-
 string formatValue(string value) {
-    // std::ostringstream hexStream;
-
-    // // Convert the integer to hex string
-    // hexStream << std::hex << std::setfill('0') << std::setw(3) << (value & 0xFFF);
-
-    // // Split the hex string into two parts: first digit and last two digits
-    // std::string hexString = hexStream.str();
-    // std::string firstDigit = hexString.substr(0, 1);
-    // std::string lastTwoDigits = hexString.substr(1);
-
-    // // Create the little endian hex value format "0 00"
-    // std::string littleEndianHex = firstDigit + " " + lastTwoDigits;
-
-    // return littleEndianHex;
-
   string val;
   if(value.length() == 1){
     val = "00" + value;
@@ -500,12 +474,6 @@ void __label(string label)
       symbolList.push_back(
           symbolAttributes(counter++, locationCounter, 0, "NOTYP", "LOC", currSection, label));
     }
-  }
-  if(secondPass){
-    // int val = getSymbolValue(label);
-    // int loc = insertLiteral(val);
-    // relocationList.push_back(
-    //   relocationAttributes(loc, "R_X86_64_32", currSection, val, currSection));
   }
 }
 
@@ -646,7 +614,7 @@ void __iret()
 
       if(secondPass){
         printLC();
-        outputFile << "91 " << sp << sp << " 00 08" << endl; // sp <= sp + 8
+        outputFile << "91 " << sp << sp << " 08 00" << endl; // sp <= sp + 8
         incrementLC(1);
 
         printLC();

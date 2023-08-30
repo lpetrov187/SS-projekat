@@ -19,7 +19,6 @@ const int cause = 2;
 
 vector<string> all_args;
 ifstream inputFile;
-// std::ofstream outputFile;
 string inputFileName;
 map<unsigned int, string> memory;
 string line;
@@ -32,7 +31,6 @@ int main(int argc, char* argv[]){
   }
 
   regs[pc] = uint(stoul("40000000", 0, 16));
-  regs[sp] = uint(stoul("10000000", 0, 16));
 
   inputFileName = all_args[0];
 
@@ -60,10 +58,7 @@ int main(int argc, char* argv[]){
   }
 
   while(!endFlag){
-    // cout << formatValueLittleEndian(regs[pc]) << endl;
     string instr = memory[regs[pc]];
-    // if(instr == "")
-      // instr = "00 00 00 00";
 
     cout << instr << endl;
     regs[pc] += 4;
@@ -127,7 +122,6 @@ int main(int argc, char* argv[]){
     }
 
   }
-  cout << formatValueLittleEndian(csr[handler]) << endl;
 }
 
 string decToHex3(int val)
@@ -154,7 +148,6 @@ void _call(int a, int b, int disp, int mod){
   unsigned int nextPC = 0;
   if(mod == 1){
     nextPC = littleEndianHexToUint(memory[regs[a] + regs[b] + disp]);
-    // cout << "call: " << memory[regs[a] + regs[b] + disp] << endl;
   }
   switch (mod)
   {
@@ -316,11 +309,7 @@ void _ld(int a, int b, int c, int disp, int mod){
     regs[a] = littleEndianHexToUint(memory[regs[b] + regs[c] + disp]);
     break;
   case 3:
-    // cout << disp << endl;
-    // cout << regs[b];
-    // cout << ":" << memory[regs[b]] << endl;
     regs[a] = littleEndianHexToUint(memory[regs[b]]);
-    // cout << regs[a] << endl;
     regs[b] = regs[b] + disp;
     break;
   case 4:
@@ -330,7 +319,7 @@ void _ld(int a, int b, int c, int disp, int mod){
     csr[a] = csr[b] | disp;
     break;
   case 6:
-    regs[a] = littleEndianHexToUint(memory[regs[b] + regs[c] + disp]);
+    csr[a] = littleEndianHexToUint(memory[regs[b] + regs[c] + disp]);
     break;
   case 7:
     csr[a] = littleEndianHexToUint(memory[regs[b]]);

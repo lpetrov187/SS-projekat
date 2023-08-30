@@ -223,7 +223,7 @@ void joinSections(){
 void updateSectionSymbols(){
   for(int i = 0; i < fileSymTab.size(); i++){
     bool loc = false;
-    if(fileSymTab[i].bind == "GLOB"){
+    if(fileSymTab[i].bind == "GLOB" || fileSymTab[i].type == "SCTN"){
       for(int j = 0; j < fileSymTab.size(); j++){ // nadji sekciju u kojoj je dati simbol
         if(fileSymTab[i].numSection == fileSymTab[j].num){
           string sectionName = fileSymTab[j].name;
