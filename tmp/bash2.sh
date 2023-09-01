@@ -1,1 +1,1 @@
-g++ ../src/linker.cpp -o ../tests/linker
+g++ ../src/linker.cpp -o linker

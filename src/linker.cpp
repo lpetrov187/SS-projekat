@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
         if(tmp == nullptr){
           sectionList.append(Section(name, addon, locationCounter));
           tmp = sectionList.find(name);
-        } 
+        }
         else {
           int addonInt = sectionList.getAddon(tmp);
           addonInt++;
@@ -132,11 +132,17 @@ int main(int argc, char* argv[])
   // azuriraj globalne simbole u sekcijama u kojim se koriste
   updateSectionSymbols2();
 
+  // proveri globalSymTab
+  checkGlobalSymTab();
+
   // TODO: popravi vrednosti preko relokacione tabele
   applyRelocationTable();
 
   // spoji sekcije iz vise fajlova
   joinSections();
+
+  // proveri preklapanje sekcija
+  // checkOvelapping();
 
   sectionList.display();
 }
@@ -230,25 +236,34 @@ void updateSectionSymbols(){
         if(fileSymTab[i].numSection == fileSymTab[j].num){
           string sectionName = fileSymTab[j].name;
           Node* tmp = sectionList.find(sectionName);
-          // dohvati pocetak sekcije
-          int addr = tmp->data.startAddr;
-          // ubaci element u tabelu simbola sekcije
-          loc = true;
-          tmp->data.sectionSymbols.push_back(fileSymTab[i]);
-          tmp->data.sectionSymbols[tmp->data.sectionSymbols.size() - 1].setValue(fileSymTab[i].valDecimal + addr);
-          tmp->data.sectionSymbols[tmp->data.sectionSymbols.size() - 1].setSecName(fileSymTab[j].name);
-          globalSymTab.push_back(fileSymTab[i]);
-          globalSymTab[globalSymTab.size() - 1].setValue(fileSymTab[i].valDecimal + addr);
-          globalSymTab[globalSymTab.size() - 1].setSecName(fileSymTab[j].name);
+          if(tmp){
+            // dohvati pocetak sekcije
+            int addr = tmp->data.startAddr;
+            // ubaci element u tabelu simbola sekcije
+            loc = true;
+            tmp->data.sectionSymbols.push_back(fileSymTab[i]);
+            tmp->data.sectionSymbols[tmp->data.sectionSymbols.size() - 1].setValue(fileSymTab[i].valDecimal + addr);
+            tmp->data.sectionSymbols[tmp->data.sectionSymbols.size() - 1].setSecName(fileSymTab[j].name);
+
+            globalSymTab.push_back(fileSymTab[i]);
+            globalSymTab[globalSymTab.size() - 1].setValue(fileSymTab[i].valDecimal + addr);
+            globalSymTab[globalSymTab.size() - 1].setSecName(fileSymTab[j].name);
+          } else {
+            cout << "Linker couldn't find section." << endl;
+          }
         } else if(fileSymTab[j].type == "SCTN"){
           string sectionName = fileSymTab[j].name;
           Node* tmp = sectionList.find(sectionName);
-          // dohvati pocetak sekcije
-          int addr = tmp->data.startAddr;
-          // ubaci element u tabelu simbola sekcije
-          loc = true;
-          tmp->data.sectionSymbols.push_back(fileSymTab[i]);
-          tmp->data.sectionSymbols[tmp->data.sectionSymbols.size() - 1].setValue(0);
+          if(tmp){
+            // dohvati pocetak sekcije
+            int addr = tmp->data.startAddr;
+            // ubaci element u tabelu simbola sekcije
+            loc = true;
+            tmp->data.sectionSymbols.push_back(fileSymTab[i]);
+            tmp->data.sectionSymbols[tmp->data.sectionSymbols.size() - 1].setValue(-1);
+          } else {
+            cout << "Linker couldn't find section." << endl;
+          }
         }
       }
     }
@@ -302,19 +317,7 @@ void reallocateSections()
   Node* curr = sectionList.head;
   vector<string> tmp = vector<string>();
 
-  // for(int p = 0; p < sectionPlaces.size() - 1; p++){
-  //   for(int q = p + 1; q < sectionPlaces.size(); q++){
-  //     vector<string> tmpP = getValues(sectionPlaces[p]);
-  //     vector<string> tmpQ = getValues(sectionPlaces[q]);
-  //     int pInt = int(stoul(tmpP[1]));
-  //     int qInt = int(stoul(tmpQ[1]));
-  //     if(pInt > qInt){
-  //       string tmp = sectionPlaces[p];
-  //       sectionPlaces[p] = sectionPlaces[q];
-  //       sectionPlaces[q] = tmp;
-  //     }
-  //   }
-  // }
+  sortPlaces();
 
   int newStartAddr = 0;
   for(const auto& el: sectionPlaces){
@@ -331,7 +334,6 @@ void reallocateSections()
   while(curr){
     if(!curr->data.reallocated){
       newStartAddr = updateSectionValues(curr->data.name, newStartAddr);
-      // newStartAddr = curr->data.endAddr;
       curr->data.reallocated = true;
     }
     curr = curr->next;
@@ -399,5 +401,73 @@ void updateSectionSymbols2(){
       }
     }
     curr = curr->next;
+  }
+}
+
+void sortPlaces(){
+  for(int i = 0; i < sectionPlaces.size() - 1; i++){
+    for(int j = i + 1; j < sectionPlaces.size(); j++){
+      unsigned int iVal = getPlaceValue(sectionPlaces[i]);
+      unsigned int jVal = getPlaceValue(sectionPlaces[j]);
+      if(iVal > jVal){
+        string tmp = sectionPlaces[i];
+        sectionPlaces[i] = sectionPlaces[j];
+        sectionPlaces[j] = tmp;
+      }
+    }
+  }
+}
+
+unsigned int getPlaceValue(string input){
+  size_t atPosition = input.find('@');
+  if (atPosition != std::string::npos) {
+    // Extract the substring after "@" as hex number
+    std::string hexStr = input.substr(atPosition + 1);
+    
+    unsigned int hexValue;
+    std::istringstream(hexStr) >> std::hex >> hexValue;
+    return hexValue;
+  } else {
+    std::cout << "No hex number found in the input string." << std::endl;
+    return 0;
+  }
+}
+
+void checkGlobalSymTab(){
+  string prevName = "";
+  Node* curr = sectionList.head;
+  while(curr){
+    for(const auto &el: curr->data.sectionSymbols){
+      if(el.valDecimal == -1){
+        cout << "Linker found unresolved symbol: " << el.name << endl;
+        exit(-1);
+      }
+    }
+    curr = curr->next;
+  }
+  for(int i = 0; i < globalSymTab.size(); i++){
+    for(int j = 0; j < globalSymTab.size(); j++){
+      if(globalSymTab[i].name == globalSymTab[j].name && i != j && globalSymTab[i].type != "SCTN"){
+        cout << "Linker found multiple definitions of symbol: " << globalSymTab[i].name << endl;
+        exit(-1);
+      }
+    }
+  }
+}
+
+void checkOvelapping(){
+  for(int i = 0; i < sectionPlaces.size() - 1; i++){
+    for(int j = i + 1; j < sectionPlaces.size(); j++){
+      vector<string> iVal = getValues(sectionPlaces[i]);
+      vector<string> jVal = getValues(sectionPlaces[j]);
+
+      Node* tmpI = sectionList.find(iVal[0]);
+      Node* tmpJ = sectionList.find(jVal[0]);
+
+      if(tmpI->data.endAddr < tmpJ->data.startAddr){
+        cout << "Linker found sections overlapping, sections: " << tmpI->data.name << " and " << tmpJ->data.name << endl;
+        exit(-1);
+      }
+    }
   }
 }

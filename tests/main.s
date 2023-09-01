@@ -13,7 +13,6 @@ my_start:
     csrwr %r1, %handler
 
     int # software interrupt
-
     ld $1, %r1
     push %r1
     ld $1, %r1

@@ -60,7 +60,7 @@ int main(int argc, char* argv[]){
   while(!endFlag){
     string instr = memory[regs[pc]];
 
-    cout << instr << endl;
+    // cout << instr << endl;
     regs[pc] += 4;
     int disp;
 
@@ -140,12 +140,7 @@ string decToHex3(int val)
   return ss.str();
 }
 
-void _halt(){
-
-  for(auto i = memory.begin(); i != memory.end(); i++){
-    cout << i->first << ": " << i->second << endl;
-  }
-  
+void _halt(){  
   cout << "Emulated processor executed halt instruction." << endl;
   endFlag = true;
 }
@@ -320,8 +315,6 @@ void _ld(int a, int b, int c, int disp, int mod){
     regs[a] = regs[b] + disp;
     break;
   case 2:
-    cout << "b " << regs[b] << " " << regs[c] << " " << disp << endl;
-    cout << memory[regs[b] + regs[c] + disp] << endl;
     regs[a] = littleEndianHexToUint(memory[regs[b] + regs[c] + disp]);
     break;
   case 3:

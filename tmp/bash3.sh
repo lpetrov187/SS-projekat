@@ -1,2 +1,2 @@
 cd ../
-g++ src/emulator.cpp -o tests/emulator
+g++ src/emulator.cpp -o tmp/emulator

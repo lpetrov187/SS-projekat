@@ -1,9 +1,0 @@
-#.isr
-93 fe 00 04
-##.symtab
-Num	Value	Size	Type	Bind	globDef	Ndx	Name
-0 0 0 0 0 0 0 NONAME
-1 0 0 1 0 0 1 isr
-2 0 0 0 1 1 1 isr_timer
-###.rela.isr
-Offset	Type		Symbol	Addend

@@ -26,7 +26,6 @@ mathMul:
     mul %r2, %r1 # r1 used for the result
     pop %r2
     ret
-
 mathDiv:
     push %r2
     ld [%sp + 0x08], %r1

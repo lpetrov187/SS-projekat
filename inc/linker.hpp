@@ -38,6 +38,14 @@ void displayHexLC(int value);
 
 void updateSectionSymbols2();
 
+unsigned int getPlaceValue(string input);
+
+void sortPlaces();
+
+void checkGlobalSymTab();
+
+void checkOvelapping();
+
 struct symbolAttributesL{
   int num;
   string val;
@@ -227,19 +235,6 @@ public:
             int LC = current->data.startAddr;
             // cout << "Section: " << current->data.realName << " | Size: " << sz << " | Start addr: " << sAddr << " | End addr: " << eAddr << endl;
             
-                for(const auto &element: current->data.relocationTable){
-                    // cout << element.offset << "\t\t\t" << element.addend << "\t" << element.symbol << endl;
-                }
-                for(const auto &element: current->data.sectionSymbols){
-                    // cout << element.name << "\t" << element.val << "\t" << element.sectionName << endl;
-                }
-            
-            // for(const auto &element: current->data.content){
-                // cout << element << endl;
-            //     LC += 4;
-            // }
-            // LC = current->data.startAddr;
-
             for(int i = 0; i < current->data.content.size(); i++){
                 if(i % 2 == 0){
                     outputFileL << decToHex2(LC) << ": " << current->data.content[i] << " ";
