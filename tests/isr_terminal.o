@@ -1,8 +1,0 @@
-#.isr
-93 fe 04 00
-##.rela.isr
-Offset	Type					Symbol	Addend
-###.symtab
-Num	Value	Size	Type	Bind		Ndx	Name
-1:	000		0			SCTN	LOC		1		.isr	
-2:	000		0			NOTYP	GLOB		1		isr_terminal	

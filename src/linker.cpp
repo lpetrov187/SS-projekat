@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
   joinSections();
 
   // proveri preklapanje sekcija
-  // checkOvelapping();
+  checkOvelapping();
 
   sectionList.display();
 }
@@ -464,7 +464,10 @@ void checkOvelapping(){
       Node* tmpI = sectionList.find(iVal[0]);
       Node* tmpJ = sectionList.find(jVal[0]);
 
-      if(tmpI->data.endAddr < tmpJ->data.startAddr){
+      unsigned int startI = getPlaceValue(sectionPlaces[i]);
+      unsigned int startJ = getPlaceValue(sectionPlaces[j]);
+
+      if(startI + tmpI->data.size > startJ){
         cout << "Linker found sections overlapping, sections: " << tmpI->data.name << " and " << tmpJ->data.name << endl;
         exit(-1);
       }
