@@ -44,3 +44,5 @@ unsigned int _pop();
 unsigned int littleEndianHexToUint(string hexString);
 
 string formatValueLittleEndian(int val);
+
+string formatRegisterValue(unsigned int value);

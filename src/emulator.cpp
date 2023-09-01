@@ -122,6 +122,15 @@ int main(int argc, char* argv[]){
     }
 
   }
+  cout << "Emulated processor state:" << endl;
+  for(int i  = 0; i < 16; i++){
+    cout << "r" << i << "=0x" << formatRegisterValue(regs[i]);
+    if(i % 4 == 3){
+      cout << endl;
+    } else {
+      cout << "\t";
+    }
+  }
 }
 
 string decToHex3(int val)
@@ -132,7 +141,12 @@ string decToHex3(int val)
 }
 
 void _halt(){
-  cout << "Halting processor." << endl;
+
+  for(auto i = memory.begin(); i != memory.end(); i++){
+    cout << i->first << ": " << i->second << endl;
+  }
+  
+  cout << "Emulated processor executed halt instruction." << endl;
   endFlag = true;
 }
 
@@ -306,6 +320,8 @@ void _ld(int a, int b, int c, int disp, int mod){
     regs[a] = regs[b] + disp;
     break;
   case 2:
+    cout << "b " << regs[b] << " " << regs[c] << " " << disp << endl;
+    cout << memory[regs[b] + regs[c] + disp] << endl;
     regs[a] = littleEndianHexToUint(memory[regs[b] + regs[c] + disp]);
     break;
   case 3:
@@ -366,4 +382,13 @@ string formatValueLittleEndian(int val)
            << std::setw(2) << (val >> 16 & 0xFF) << " "
            << std::setw(2) << (val >> 24 & 0xFF);
     return stream.str();
+}
+
+string formatRegisterValue(unsigned int value){
+
+  std::stringstream stream;
+  stream << std::setfill('0') << std::setw(8) << std::hex << value;
+  std::string hex_string = stream.str();
+
+  return hex_string;
 }

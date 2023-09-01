@@ -225,7 +225,7 @@ public:
             string sAddr = decToHex2(current->data.startAddr);
             string eAddr = decToHex2(current->data.endAddr);
             int LC = current->data.startAddr;
-            cout << "Section: " << current->data.realName << " | Size: " << sz << " | Start addr: " << sAddr << " | End addr: " << eAddr << endl;
+            // cout << "Section: " << current->data.realName << " | Size: " << sz << " | Start addr: " << sAddr << " | End addr: " << eAddr << endl;
             
                 for(const auto &element: current->data.relocationTable){
                     // cout << element.offset << "\t\t\t" << element.addend << "\t" << element.symbol << endl;
@@ -285,15 +285,17 @@ public:
     }
 
     void updateAfter(Node* node){
-        int val = node->data.size;
-        Node* curr = node->next;
-        while(curr){
-            curr->data.startAddr += val;
-            curr->data.endAddr += val;
-            for(int i = 0; i < curr->data.sectionSymbols.size(); i++){
-                curr->data.sectionSymbols[i].setValue(curr->data.sectionSymbols[i].valDecimal + val);
+        if(node->next){
+            int val = node->data.size;
+            Node* curr = node->next;
+            while(curr){
+                curr->data.startAddr += val;
+                curr->data.endAddr += val;
+                for(int i = 0; i < curr->data.sectionSymbols.size(); i++){
+                    curr->data.sectionSymbols[i].setValue(curr->data.sectionSymbols[i].valDecimal + val);
+                }
+                curr = curr->next;
             }
-            curr = curr->next;
         }
     }
 

@@ -79,10 +79,10 @@ int main(int argc, char* argv[])
     yyparse();
   } while (!feof(yyin));
 
-  printSymTable();
-  printLiteralTable();
-  printSectionTable();
-  printRelocationTable();
+  // printSymTable();
+  // printLiteralTable();
+  // printSectionTable();
+  // printRelocationTable();
 
   outputFile.close();
 }
@@ -314,7 +314,6 @@ int insertSymbolInLP(string symb){
 int getSymbolValue(string symb)
 {
   bool defined = false;
-  cout << symb << endl;
   for (int i = 0; i < symbolList.size(); i++)
   {
     if (symb == symbolList[i].name)
@@ -816,7 +815,7 @@ void __ld_memdir(int literal, int reg)
     incrementLC(1);
 
     printLC();
-    outputFile << "92 " <<  decToHex(reg) << reg << " 00 00" << endl;
+    outputFile << "92 " <<  decToHex(reg) << decToHex(reg) << " 00 00" << endl;
     incrementLC(1);
   }
 }
@@ -845,7 +844,7 @@ void __ld_regdir(int op, int reg)
   }
   if(secondPass){
     printLC();
-    outputFile << "91 " <<  decToHex(reg) << op << " 00 00" << endl;
+    outputFile << "91 " <<  decToHex(reg) << decToHex(op) << " 00 00" << endl;
     incrementLC(1);
   }
 }
@@ -857,7 +856,7 @@ void __ld_regind(int op, int reg)
   }
   if(secondPass){
     printLC();
-    outputFile << "92 " <<  decToHex(reg) << op << " 00 00" << endl;
+    outputFile << "92 " <<  decToHex(reg) << decToHex(op) << " 00 00" << endl;
     incrementLC(1);
   }
 }
@@ -955,14 +954,14 @@ void __st_regdir(int op, int reg)
   }
 }
 
-void __st_regind(int op, int reg)
+void __st_regind(int reg, int op)
 {
   if(firstPass){
     incrementLC(1);
   }
   if(secondPass){
     printLC();
-    outputFile << "92 " <<  decToHex(op) <<  decToHex(reg) << " 00 00" << endl;
+    outputFile << "80 " << decToHex(op) << "0 " << decToHex(reg) << "0 00" << endl;
     incrementLC(1);
   }
 }
@@ -975,7 +974,7 @@ void __st_regindpom(int reg, int op, int literal)
   if(secondPass){
     printLC();
     string disp = formatValue(decToHex(literal));
-    outputFile << "92 " <<  decToHex(op) <<  decToHex(reg) << " 0" << disp << endl;
+    outputFile << "80 " <<  decToHex(op) << "0 " <<  decToHex(reg) << disp << endl;
     incrementLC(1);
   }
 }
@@ -989,7 +988,7 @@ void __st_regindpom(int reg, int op, string symbol)
     printLC();
     int val = getSymbolValue(symbol);
     string disp = formatValue(decToHex(val));
-    outputFile << "92 " <<  decToHex(op) <<  decToHex(reg) << " 0" << disp << endl;
+    outputFile << "80 " <<  decToHex(op) << "0 " <<  decToHex(reg) << disp << endl;
     incrementLC(1);
   }
 }

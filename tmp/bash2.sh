@@ -1,2 +1,1 @@
-cd ../
-g++ src/linker.cpp -o tmp/linker
+g++ ../src/linker.cpp -o ../tests/linker

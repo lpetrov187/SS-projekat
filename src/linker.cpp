@@ -29,12 +29,14 @@ int main(int argc, char* argv[])
   if (argc > 1) {
     all_args.assign(argv + 1, argv + argc);
   }
-
-  int i = 1;
-  while(all_args[i].substr(0, 6) == "-place"){
+  int i = 0;
+  
+  i = 1;
+  while(all_args[i] != "-o"){
     sectionPlaces.push_back(all_args[i]);
     i++;
   }
+
   // preskoci -o
   i++;
   outputFileName = all_args[i];
@@ -114,6 +116,7 @@ int main(int argc, char* argv[])
     }
     // azuriraj tabelu simbola sekcije 
     updateSectionSymbols();
+
     // azuriraj sekcije i simbole iza trenutne
     if(inserted)
       sectionList.updateAfter(tmp);
@@ -135,9 +138,6 @@ int main(int argc, char* argv[])
   // spoji sekcije iz vise fajlova
   joinSections();
 
-  for(const auto &element: globalSymTab){
-    cout << element.name << "\t\t" << element.val << endl;
-  }
   sectionList.display();
 }
 
@@ -214,6 +214,8 @@ void joinSections(){
         curr->data.endAddr += nextNode->data.size;
         sectionList.deleteNode(nextNode->data);
         nextNode = curr->next;
+        if(nextNode == nullptr)
+          break;
       }
     }
     curr = curr->next;
@@ -299,6 +301,21 @@ void reallocateSections()
 {
   Node* curr = sectionList.head;
   vector<string> tmp = vector<string>();
+
+  // for(int p = 0; p < sectionPlaces.size() - 1; p++){
+  //   for(int q = p + 1; q < sectionPlaces.size(); q++){
+  //     vector<string> tmpP = getValues(sectionPlaces[p]);
+  //     vector<string> tmpQ = getValues(sectionPlaces[q]);
+  //     int pInt = int(stoul(tmpP[1]));
+  //     int qInt = int(stoul(tmpQ[1]));
+  //     if(pInt > qInt){
+  //       string tmp = sectionPlaces[p];
+  //       sectionPlaces[p] = sectionPlaces[q];
+  //       sectionPlaces[q] = tmp;
+  //     }
+  //   }
+  // }
+
   int newStartAddr = 0;
   for(const auto& el: sectionPlaces){
     tmp = getValues(el);
