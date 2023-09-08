@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
   joinSections();
 
   // proveri preklapanje sekcija
-  checkOvelapping();
+  checkOverlapping();
 
   sectionList.display();
 }
@@ -455,7 +455,7 @@ void checkGlobalSymTab(){
   }
 }
 
-void checkOvelapping(){
+void checkOverlapping(){
   for(int i = 0; i < sectionPlaces.size() - 1; i++){
     for(int j = i + 1; j < sectionPlaces.size(); j++){
       vector<string> iVal = getValues(sectionPlaces[i]);

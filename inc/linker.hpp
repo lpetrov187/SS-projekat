@@ -44,7 +44,7 @@ void sortPlaces();
 
 void checkGlobalSymTab();
 
-void checkOvelapping();
+void checkOverlapping();
 
 struct symbolAttributesL{
   int num;
