@@ -1,0 +1,10 @@
+rm ../tests/handler.o
+rm ../tests/isr_software.o
+rm ../tests/isr_terminal.o
+rm ../tests/isr_timer.o
+rm ../tests/main.o
+rm ../tests/math.o
+rm ../tests/program.hex
+rm ./assembler
+rm ./linker
+rm ./emulator
